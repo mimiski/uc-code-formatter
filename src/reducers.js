@@ -34,10 +34,24 @@ module.exports = {
   },
 
   loopHeaderFormatting: function (input) {
-    const regex = new RegExp(regexes.loopHeader, 'g');
-    const match = input.match(regex);
-    console.log(match);
-    result = input.replace(regex, 'for ($1 $2 $3; $4 $5 $6; $7)')
-    return result;
+
+    const regexes = [
+      [new RegExp("for[ |\t]*\\(", 'g'), 'for ('],
+      [new RegExp("for \\([ |\t]*([a-zA-Z0-9]+)[ |\t]*([=]*)[ |\t]*([a-zA-Z0-9]+)[ |\t]*;", 'g'), 'for ($1 $2 $3;'],
+      [new RegExp("for \\([ |\t]*;", 'g'), 'for ( ;'],
+      [new RegExp("for \\((.*?);[ |\t]*([a-zA-Z0-9]+)[ |\t]*([<|>|==|<=|>=]+)[ |\t]*([a-zA-Z0-9]+)[ |\t]*;", 'g'), 'for ($1; $2 $3 $4;'],
+      [new RegExp("for \\((.*?);[ |\t]*([a-zA-Z0-9]+)[ |\t]*;", 'g'), 'for ($1; $2;'],
+      [new RegExp("for \\((.*?);[ |\t]*;", 'g'), 'for ($1; ;'],
+      [new RegExp("for \\((.*?);(.*?);[ |\t]*([a-zA-Z0-9]+)[ |\t]*([=]*)[ |\t]*([a-zA-Z0-9]+)[ |\t]*\\)", 'g'), 'for ($1; $2; $3 $4 $5)'],
+      [new RegExp("for \\((.*?);(.*?);[ |\t]*([a-zA-Z0-9]+)\\+\\+[ |\t]*\\)", 'g'), 'for ($1;$2; $3++)'],
+      [new RegExp("for \\((.*?);(.*?);[ |\t]*\\+\\+([a-zA-Z0-9]+)[ |\t]*\\)", 'g'), 'for ($1;$2; ++$3)'],
+      [new RegExp("for \\((.*?);(.*?);[ |\t]*\\)", 'g'), 'for ($1;$2; )'],
+    ];
+
+    const applyReplace = (input, [regex, replacement]) => {
+      return input.replace(regex, replacement);
+    }
+
+    return regexes.reduce(applyReplace, input);
   }
 }
