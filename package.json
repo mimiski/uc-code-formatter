@@ -1,0 +1,30 @@
+{
+  "name": "uc-code-formatter",
+  "version": "0.0.1",
+  "description": "",
+  "main": "formatter.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "chai": "^4.3.4",
+    "i": "^0.3.6",
+    "npm": "^7.24.0"
+  },
+  "devDependencies": {
+    "mocha": "^9.1.1"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec tests/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/mimiski/uc-code-formatter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mimiski/uc-code-formatter/issues"
+  },
+  "homepage": "https://github.com/mimiski/uc-code-formatter#readme"
+}

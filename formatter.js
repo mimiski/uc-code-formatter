@@ -1,40 +1,9 @@
-var readline = require("readline");
-var Utils = require("./utils.js");
 
-const INDENTATION_STRING = "    ";
-const LINE_ENDING = "\r\n";
-
-const BLOCK_TYPE = {
-  classDefinition: "classDefinition",
-  classAttributesDefinition: "classAttributesDefinition",
-  loopBody: "loopBody", // for, while
-  loopHeader: "loopHeader", // for(i = 0;...) / while(i > 0)
-  ifBody: "ifBody",
-  ifHeader: "ifHeader", // if(i>0)
-  switchBody: "switchBody",
-  switchHeader: "switchHeader", // switch(...)
-  defautPropertiesHeader: "defautPropertiesHeader", // switch(...)
-  defautPropertiesBody: "defautPropertiesBody", // switch(...)
-  openCurlyBraces: "openCurlyBraces", // switch(...)
-  closeCurlyBraces: "closeCurlyBraces", // switch(...)
-};
-
-function splitArray(array, indexes) {
-  return array.reduce(
-    (p, c, i) => {
-      if (i - 1 === indexes[0]) {
-        indexes.shift();
-        p.push([]);
-      }
-      p[p.length - 1].push(c);
-      return p;
-    },
-    [[]]
-  );
-}
-
-function zip(a, b) {
-  return a.map((k, i) => [k, b[i]]);
+const INDENTATION_STRING = "    "
+const LINE_ENDING = "\r\n"
+  
+function forLoopsSingleLiners(input) {
+  return input.replace(/(for\(.*\))([^{]*;)/, "$1{$2}");
 }
 
 function getContentType(content, stack) {
@@ -84,37 +53,6 @@ function getContentType(content, stack) {
   return null;
 }
 
-class ContentBlock {
-  constructor(indentation, blockEnd, blockStart) {
-    this.indentation = indentation;
-    this.blockEnd = blockEnd;
-    this.blockStart = blockStart;
-  }
-}
-
-class CodeBlock {
-  constructor(lines, type, content) {
-    this.lines = lines;
-    this.type = type;
-    this.content = content;
-  }
-}
-
-// CodeBlock.prototype.toString = function() {
-//   return self.lines.toString() + " " + self.type.toString();
-// }
-
-class Line {
-  constructor(indentation, lineContent) {
-    this.indentation = indentation;
-    this.lineContent = lineContent;
-  }
-}
-
-// Line.prototype.toString = function() {
-//   return this.lineContent.toString() + " " + this.indentation.toString();
-// }
-
 function formatIndentation(inputString) {
   var contentBlocks = [];
   var indentation = 0;
@@ -134,6 +72,24 @@ function formatIndentation(inputString) {
       indentation = indentation - 1;
       contentBlocks.push(new ContentBlock(indentation, i - 1, i));
     }
+  }
+
+  function splitArray(array, indexes) {
+    return array.reduce(
+      (p, c, i) => {
+        if (i - 1 === indexes[0]) {
+          indexes.shift();
+          p.push([]);
+        }
+        p[p.length - 1].push(c);
+        return p;
+      },
+      [[]]
+    );
+  }
+
+  function zip(a, b) {
+    return a.map((k, i) => [k, b[i]]);
   }
 
   let splitIndexes = contentBlocks.map((c) => c.blockStart);
@@ -214,21 +170,52 @@ function formatIndentation(inputString) {
   return result;
 }
 
-function forLoopsSingleLiners(input) {
-  return input.replace(/(for\(.*\))([^{]*;)/, "$1{$2}");
+  
+const BLOCK_TYPE = {
+  classDefinition: "classDefinition",
+  classAttributesDefinition: "classAttributesDefinition",
+  loopBody: "loopBody", // for, while
+  loopHeader: "loopHeader", // for(i = 0;...) / while(i > 0)
+  ifBody: "ifBody",
+  ifHeader: "ifHeader", // if(i>0)
+  switchBody: "switchBody",
+  switchHeader: "switchHeader", // switch(...)
+  defautPropertiesHeader: "defautPropertiesHeader", // switch(...)
+  defautPropertiesBody: "defautPropertiesBody", // switch(...)
+  openCurlyBraces: "openCurlyBraces", // switch(...)
+  closeCurlyBraces: "closeCurlyBraces", // switch(...)
 }
 
-function formatCode(input) {
-  let formatters = [forLoopsSingleLiners, formatIndentation];
-
-  const applyFunction = (x, f) => f(x);
-
-  return formatters.reduce(applyFunction, input);
+class ContentBlock {
+  constructor(indentation, blockEnd, blockStart) {
+    this.indentation = indentation;
+    this.blockEnd = blockEnd;
+    this.blockStart = blockStart;
+  }
 }
 
-process.stdin.once("data", (chunk) => {
-  let input = chunk.toString();
-  let stripedInput = input.replace(/\n$/, "");
-  let output = formatCode(stripedInput);
-  console.log(output);
-});
+class CodeBlock {
+  constructor(lines, type, content) {
+    this.lines = lines;
+    this.type = type;
+    this.content = content;
+  }
+}
+
+class Line {
+  constructor(indentation, lineContent) {
+    this.indentation = indentation;
+    this.lineContent = lineContent;
+  }
+}
+
+module.exports = {
+  
+  formatCode: function(input) {
+    let formatters = [forLoopsSingleLiners, formatIndentation];
+  
+    const applyFunction = (x, f) => f(x);
+  
+    return formatters.reduce(applyFunction, input);
+  }
+}
