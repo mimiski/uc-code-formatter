@@ -39,13 +39,25 @@ describe('Reducers', () => {
   );
 
   it('loopHeaderFormatting', () => {
-    tests = utils.zip(filesDict.loopHeaderFormatting.input, filesDict.loopHeaderFormatting.expected_output)
-    tests.forEach(([input_file_name, expected_output_file_name]) => {
-      const input = fs.readFileSync('tests/misc/loopHeaderFormatting/' + input_file_name).toString();
-      const expected_output = fs.readFileSync('tests/misc/loopHeaderFormatting/' + expected_output_file_name).toString();
+    const inputs_1 = [
+      "for( i=   0;    i   <  1;     i++   )",
+      "for(i=0;i<1;i++)",
+      "for (i=0;i<1;i++)",
+      "for( i=0;i<1;i++)",
+      "for(i =0;i<1;i++)",
+      "for(i= 0;i<1;i++)",
+      "for(i=0 ;i<1;i++)",
+      "for(i=0; i<1;i++)",
+      "for(i=0;i <1;i++)",
+      "for(i=0;i< 1;i++)",
+      "for(i=0;i<1 ;i++)",
+      "for(i=0;i<1; i++)",
+      "for(i=0;i<1;i++ )",
+    ]
+    const expected_output_1 = "for (i = 0; i < 1; i++)";
+    inputs_1.forEach((input) => {
       result = reducers.loopHeaderFormatting(input);
-      chai.expect(result).to.equal(expected_output);
+      chai.expect(result).to.equal(expected_output_1);
     })
-    }
-  );
+  });
 })
