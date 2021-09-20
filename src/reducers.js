@@ -34,7 +34,9 @@ module.exports = {
   },
 
   loopHeaderFormatting: function (input) {
-    const regex = new RegExp(regexes.loopHeader);
+    const regex = new RegExp(regexes.loopHeader, 'g');
+    const match = input.match(regex);
+    console.log(match);
     result = input.replace(regex, 'for ($1 $2 $3; $4 $5 $6; $7)')
     return result;
   }

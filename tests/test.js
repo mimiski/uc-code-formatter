@@ -2,6 +2,8 @@ const chai = require('chai')
 const formatter = require('../src/formatter');
 const classes = require("../src/classes");
 const reducers = require("../src/reducers");
+const utils = require("../src/utils");
+
 const fs = require('fs');
 
 const filesDict = {
@@ -14,8 +16,8 @@ const filesDict = {
     expected_output: 'repeatedNewlineFormatting.expected_output.txt'
   },
   loopHeaderFormatting: {
-    input: 'loopHeaderFormatting.input.txt',
-    expected_output: 'loopHeaderFormatting.expected_output.txt'
+    input: ['1.input.txt', '2.input.txt'],
+    expected_output: ['1.expected_output.txt', '2.expected_output.txt']
   },
 }
 
@@ -37,10 +39,13 @@ describe('Reducers', () => {
   );
 
   it('loopHeaderFormatting', () => {
-    const input = fs.readFileSync('tests/misc/' + filesDict.loopHeaderFormatting.input).toString();
-    const expected_output = fs.readFileSync('tests/misc/' + filesDict.loopHeaderFormatting.expected_output).toString();
-    result = reducers.loopHeaderFormatting(input);
-    chai.expect(result).to.equal(expected_output)
+    tests = utils.zip(filesDict.loopHeaderFormatting.input, filesDict.loopHeaderFormatting.expected_output)
+    tests.forEach(([input_file_name, expected_output_file_name]) => {
+      const input = fs.readFileSync('tests/misc/loopHeaderFormatting/' + input_file_name).toString();
+      const expected_output = fs.readFileSync('tests/misc/loopHeaderFormatting/' + expected_output_file_name).toString();
+      result = reducers.loopHeaderFormatting(input);
+      chai.expect(result).to.equal(expected_output);
+    })
     }
   );
 })

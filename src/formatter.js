@@ -1,6 +1,7 @@
 const classes = require("./classes");
 const regexes = require("./regexes");
 const reducers = require("./reducers");
+const utils = require("./utils");
   
 function forLoopsSingleLiners(input) {
   return input.replace(/(for\(.*\))([^{]*;)/, "$1{$2}");
@@ -74,28 +75,10 @@ function formatIndentation(inputString) {
     }
   }
 
-  function splitArray(array, indexes) {
-    return array.reduce(
-      (p, c, i) => {
-        if (i - 1 === indexes[0]) {
-          indexes.shift();
-          p.push([]);
-        }
-        p[p.length - 1].push(c);
-        return p;
-      },
-      [[]]
-    );
-  }
-
-  function zip(a, b) {
-    return a.map((k, i) => [k, b[i]]);
-  }
-
   let splitIndexes = contentBlocks.map((c) => c.blockStart);
   let indentations = contentBlocks.map((c) => c.indentation);
 
-  let contents = splitArray(input, splitIndexes).map((content) => {
+  let contents = utils.splitArray(input, splitIndexes).map((content) => {
     return content
       .join("")
       .replace(/^[\n|\r| ]*/, "")
@@ -104,7 +87,7 @@ function formatIndentation(inputString) {
 
   // console.log(contents);
 
-  let contentWithIndentation = zip(contents, indentations);
+  let contentWithIndentation = utils.zip(contents, indentations);
 
   var stack = [];
   let codeBlocks = contentWithIndentation.map(([content, indentation]) => {
