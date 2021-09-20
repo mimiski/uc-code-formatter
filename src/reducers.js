@@ -4,6 +4,10 @@ const LINE_ENDING = "\r\n"
 
 const regexes = require("./regexes");
 
+const applyReplace = (input, [regex, replacement]) => {
+  return input.replace(regex, replacement);
+}
+
 module.exports = {
   classDefinitionFormatting: function (input) {
     function indentationFunc(index) {
@@ -48,9 +52,23 @@ module.exports = {
       [new RegExp("for \\((.*?);(.*?);[ |\t]*\\)", 'g'), 'for ($1;$2; )'],
     ];
 
-    const applyReplace = (input, [regex, replacement]) => {
-      return input.replace(regex, replacement);
-    }
+    return regexes.reduce(applyReplace, input);
+  },
+
+  ifHeaderFormatting: function (input) {
+
+    const regexes = [
+      [new RegExp("if[ |\t]*\\([ |\t]*(.+?)[ |\t]*\\)", 'g'), 'if ($1)'],
+    ];
+
+    return regexes.reduce(applyReplace, input);
+  },
+
+  switchHeaderFormatting: function (input) {
+
+    const regexes = [
+      [new RegExp("switch[ |\t]*\\([ |\t]*(.+?)[ |\t]*\\)", 'g'), 'switch ($1)'],
+    ];
 
     return regexes.reduce(applyReplace, input);
   }

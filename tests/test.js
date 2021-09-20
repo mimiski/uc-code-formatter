@@ -120,4 +120,32 @@ describe("Reducers", () => {
       chai.expect(result).to.equal(expected_output_3);
     });
   });
+
+  it("ifHeaderFormatting", () => {
+    const inputs = [
+      "if(bFlag)",
+      "if (bFlag)",
+      "if( bFlag)",
+      "if(bFlag )",
+    ];
+    const expected_output = "if (bFlag)";
+    inputs.forEach((input) => {
+      result = reducers.ifHeaderFormatting(input);
+      chai.expect(result).to.equal(expected_output);
+    });
+  });
+
+  it("switchHeaderFormatting", () => {
+    const inputs = [
+      "switch(bFlag)",
+      "switch (bFlag)",
+      "switch( bFlag)",
+      "switch(bFlag )",
+    ];
+    const expected_output = "switch (bFlag)";
+    inputs.forEach((input) => {
+      result = reducers.switchHeaderFormatting(input);
+      chai.expect(result).to.equal(expected_output);
+    });
+  });
 });
