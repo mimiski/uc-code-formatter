@@ -1,6 +1,6 @@
 
 const INDENTATION_STRING = "    "
-const LINE_ENDING = "\n"
+const LINE_ENDING = "\r\n"
 
 const regexes = require("./regexes");
 

@@ -1,3 +1,3 @@
 module.exports = {
-  classDefinition: "class.*(extends)(.|\n)*;"
+  classDefinition: "class.*(extends)(.|\n|\r)*;"
 }
