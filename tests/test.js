@@ -25,6 +25,17 @@ const filesDict = {
   whileLoopOneLiner: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
   },
+  ifOneLiner: {
+    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+  },
+  curlyBracesLineSplitting: {
+    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    expected_output: [
+      "1.expected_output.txt",
+      "2.expected_output.txt",
+      "3.expected_output.txt",
+    ],
+  },
 };
 
 describe("Reducers", () => {
@@ -152,21 +163,56 @@ describe("Reducers", () => {
 
   it("forLoopOneLiner", () => {
     filesDict.forLoopOneLiner.input.forEach((fileName) => {
-      const input = fs.readFileSync("tests/misc/forLoopOneLiner/" + fileName).toString();
+      const input = fs
+        .readFileSync("tests/misc/forLoopOneLiner/" + fileName)
+        .toString();
       result = reducers.forLoopOneLiner(input);
       chai
         .expect(result)
-        .to.match(new RegExp("for[ |\t]*\(.+\)[ |\t]*\{((.|\n|\r)*)"));
+        .to.match(new RegExp("for[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
     });
   });
 
   it("whileLoopOneLiner", () => {
     filesDict.whileLoopOneLiner.input.forEach((fileName) => {
-      const input = fs.readFileSync("tests/misc/whileLoopOneLiner/" + fileName).toString();
+      const input = fs
+        .readFileSync("tests/misc/whileLoopOneLiner/" + fileName)
+        .toString();
       result = reducers.whileLoopOneLiner(input);
       chai
         .expect(result)
-        .to.match(new RegExp("while[ |\t]*\(.+\)[ |\t]*\{((.|\n|\r)*)"));
+        .to.match(new RegExp("while[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
+    });
+  });
+
+  it("ifOneLiner", () => {
+    filesDict.ifOneLiner.input.forEach((fileName) => {
+      const input = fs
+        .readFileSync("tests/misc/ifOneLiner/" + fileName)
+        .toString();
+      result = reducers.ifOneLiner(input);
+      chai
+        .expect(result)
+        .to.match(new RegExp("if[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
+    });
+  });
+
+  it("curlyBracesLineSplitting", () => {
+    filesDict.curlyBracesLineSplitting.input.forEach((inputFileName) => {
+      const input = fs
+        .readFileSync("tests/misc/curlyBracesLineSplitting/" + inputFileName)
+        .toString();
+      result = reducers.curlyBracesLineSplitting(input).split("\r\n");
+      const expectedOutput1 = new RegExp(/[\S]+.*?\{/)
+      const expectedOutput2 = new RegExp(/\{.*?[\S]+/)
+      const expectedOutput3 = new RegExp(/[\S]+.*?\}/)
+      const expectedOutput4 = new RegExp(/\}.*?[\S]+/)
+      result.forEach((line) => {
+        chai.expect(line).to.not.match(expectedOutput1);
+        chai.expect(line).to.not.match(expectedOutput2);
+        chai.expect(line).to.not.match(expectedOutput3);
+        chai.expect(line).to.not.match(expectedOutput4);
+      })
     });
   });
 });
