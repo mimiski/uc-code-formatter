@@ -71,5 +71,13 @@ module.exports = {
     ];
 
     return regexes.reduce(applyReplace, input);
+  },
+
+  forLoopOneLiner: function (input) {
+    return input.replace(/(for[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/, "$1{$2}");
+  },
+
+  whileLoopOneLiner: function (input) {
+    return input.replace(/(while[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/, "$1{$2}");
   }
 }

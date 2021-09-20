@@ -19,6 +19,12 @@ const filesDict = {
     input: ["1.input.txt", "2.input.txt"],
     expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
+  forLoopOneLiner: {
+    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+  },
+  whileLoopOneLiner: {
+    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+  },
 };
 
 describe("Reducers", () => {
@@ -122,12 +128,7 @@ describe("Reducers", () => {
   });
 
   it("ifHeaderFormatting", () => {
-    const inputs = [
-      "if(bFlag)",
-      "if (bFlag)",
-      "if( bFlag)",
-      "if(bFlag )",
-    ];
+    const inputs = ["if(bFlag)", "if (bFlag)", "if( bFlag)", "if(bFlag )"];
     const expected_output = "if (bFlag)";
     inputs.forEach((input) => {
       result = reducers.ifHeaderFormatting(input);
@@ -146,6 +147,26 @@ describe("Reducers", () => {
     inputs.forEach((input) => {
       result = reducers.switchHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output);
+    });
+  });
+
+  it("forLoopOneLiner", () => {
+    filesDict.forLoopOneLiner.input.forEach((fileName) => {
+      const input = fs.readFileSync("tests/misc/forLoopOneLiner/" + fileName).toString();
+      result = reducers.forLoopOneLiner(input);
+      chai
+        .expect(result)
+        .to.match(new RegExp("for[ |\t]*\(.+\)[ |\t]*\{((.|\n|\r)*)"));
+    });
+  });
+
+  it("whileLoopOneLiner", () => {
+    filesDict.whileLoopOneLiner.input.forEach((fileName) => {
+      const input = fs.readFileSync("tests/misc/whileLoopOneLiner/" + fileName).toString();
+      result = reducers.whileLoopOneLiner(input);
+      chai
+        .expect(result)
+        .to.match(new RegExp("while[ |\t]*\(.+\)[ |\t]*\{((.|\n|\r)*)"));
     });
   });
 });
