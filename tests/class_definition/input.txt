@@ -1,0 +1,2 @@
+class Asdf extends Zxcv
+dependenson(Qwerty);

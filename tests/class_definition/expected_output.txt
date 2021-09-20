@@ -1,0 +1,2 @@
+class Asdf extends
+    dependenson(Qwerty);
