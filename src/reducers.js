@@ -31,5 +31,11 @@ module.exports = {
       result = oldResult.replace(regex, LINE_ENDING + LINE_ENDING);
     }
     return result;
+  },
+
+  loopHeaderFormatting: function (input) {
+    const regex = new RegExp(regexes.loopHeader);
+    result = input.replace(regex, 'for ($1 $2 $3; $4 $5 $6; $7)')
+    return result;
   }
 }
