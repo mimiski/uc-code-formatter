@@ -190,7 +190,7 @@ const BLOCK_TYPE = {
 module.exports = {
   
   formatCode: function(input) {
-    let formatters = [reducers.classDefinition];
+    let formatters = [reducers.classDefinitionFormatting];
   
     const applyFunction = (x, f) => f(x);
   

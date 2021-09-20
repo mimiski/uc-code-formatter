@@ -5,7 +5,7 @@ const LINE_ENDING = "\r\n"
 const regexes = require("./regexes");
 
 module.exports = {
-  classDefinition: function (input) {
+  classDefinitionFormatting: function (input) {
     function indentationFunc(index) {
       return (index > 0 ? 1 : 0)
     };
@@ -19,6 +19,17 @@ module.exports = {
         ([line, indentation]) => INDENTATION_STRING.repeat(indentation) + line
       )
       .join(LINE_ENDING);
+    return result;
+  },
+
+  repeatedNewlineFormatting: function (input) {
+    const regex = new RegExp(LINE_ENDING + LINE_ENDING + LINE_ENDING);
+    let oldResult = input.replace(regex, LINE_ENDING + LINE_ENDING);
+    let result = oldResult.replace(regex, LINE_ENDING + LINE_ENDING);
+    while(result != oldResult) {
+      oldResult = result;
+      result = oldResult.replace(regex, LINE_ENDING + LINE_ENDING);
+    }
     return result;
   }
 }
