@@ -1,6 +1,6 @@
-
-const INDENTATION_STRING = "    "
-const LINE_ENDING = "\r\n"
+const classes = require("./classes");
+const regexes = require("./regexes");
+const reducers = require("./reducers");
   
 function forLoopsSingleLiners(input) {
   return input.replace(/(for\(.*\))([^{]*;)/, "$1{$2}");
@@ -114,47 +114,48 @@ function formatIndentation(inputString) {
       case BLOCK_TYPE.classDefinition:
         lines = content.split("\r\n").map((lineContent, index) => {
           if (index == 0) {
-            return new Line(indentation, lineContent);
+            return new classes.Line(indentation, lineContent);
           } else {
-            return new Line(indentation + 1, lineContent);
+            return new classes.Line(indentation + 1, lineContent);
           }
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       case BLOCK_TYPE.ifHeader:
         lines = content.split("\r\n").map((lineContent) => {
-          return new Line(indentation, lineContent);
+          return new classes.Line(indentation, lineContent);
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       case BLOCK_TYPE.loopHeader:
         lines = content.split("\r\n").map((lineContent) => {
-          return new Line(indentation, lineContent);
+          return new classes.Line(indentation, lineContent);
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       case BLOCK_TYPE.switchHeader:
         lines = content.split("\r\n").map((lineContent) => {
-          return new Line(indentation, lineContent);
+          return new classes.Line(indentation, lineContent);
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       case BLOCK_TYPE.defautPropertiesHeader:
         lines = content.split("\r\n").map((lineContent) => {
-          return new Line(indentation, lineContent);
+          return new classes.Line(indentation, lineContent);
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       case BLOCK_TYPE.openCurlyBraces:
         lines = content.split("\r\n").map((lineContent) => {
-          return new Line(indentation, lineContent);
+          return new classes.Line(indentation, lineContent);
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       case BLOCK_TYPE.closeCurlyBraces:
         lines = content.split("\r\n").map((lineContent) => {
-          return new Line(indentation, lineContent);
+          return new classes.Line(indentation, lineContent);
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
       default:
-        lines = content.split(";").map((lineContent) => {
-          return new Line(indentation, lineContent + ";");
+        console.log(content);
+        lines = content.trim().split(";").map((lineContent) => {
+          return new classes.Line(indentation, lineContent + ";");
         });
-        return new CodeBlock(lines, type, content);
+        return new classes.CodeBlock(lines, type, content);
     }
   });
 
@@ -186,33 +187,10 @@ const BLOCK_TYPE = {
   closeCurlyBraces: "closeCurlyBraces", // switch(...)
 }
 
-class ContentBlock {
-  constructor(indentation, blockEnd, blockStart) {
-    this.indentation = indentation;
-    this.blockEnd = blockEnd;
-    this.blockStart = blockStart;
-  }
-}
-
-class CodeBlock {
-  constructor(lines, type, content) {
-    this.lines = lines;
-    this.type = type;
-    this.content = content;
-  }
-}
-
-class Line {
-  constructor(indentation, lineContent) {
-    this.indentation = indentation;
-    this.lineContent = lineContent;
-  }
-}
-
 module.exports = {
   
   formatCode: function(input) {
-    let formatters = [forLoopsSingleLiners, formatIndentation];
+    let formatters = [reducers.classDefinition];
   
     const applyFunction = (x, f) => f(x);
   

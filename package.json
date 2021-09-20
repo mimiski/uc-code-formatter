@@ -2,20 +2,21 @@
   "name": "uc-code-formatter",
   "version": "0.0.1",
   "description": "",
-  "main": "formatter.js",
+  "main": "src/formatter.js",
   "directories": {
-    "test": "tests"
+    "test": "./tests/"
+  },
+  "scripts": {
+    "test": "mocha"
   },
   "dependencies": {
     "chai": "^4.3.4",
     "i": "^0.3.6",
-    "npm": "^7.24.0"
+    "npm": "^7.24.0",
+    "nyc": "^15.1.0"
   },
   "devDependencies": {
-    "mocha": "^9.1.1"
-  },
-  "scripts": {
-    "test": "mocha --reporter spec tests/test.js"
+    "mocha": "latest"
   },
   "repository": {
     "type": "git",
