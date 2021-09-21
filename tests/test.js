@@ -277,8 +277,23 @@ describe("Reducers", () => {
   });
 
   it("lineIndentation string variable with braces inside", () => {
-    const input = "x = \"{0} {1}\"";
-    const expected_output = "x = \"{0} {1}\"\r\n";
+    const input = fs
+      .readFileSync(
+        "tests/misc/lineIndentation/curly_braces_vs_comments.input.txt"
+      )
+      .toString();
+    const expected_output = fs
+      .readFileSync(
+        "tests/misc/lineIndentation/curly_braces_vs_comments.expected_output.txt"
+      )
+      .toString();
+    const result = reducers.lineIndentation(input);
+    chai.expect(result).to.equal(expected_output);
+  });
+
+  it("lineIndentation curly braces in comments", () => {
+    const input = '// {0} {1}';
+    const expected_output = '// {0} {1}\r\n';
     const result = reducers.lineIndentation(input);
     chai.expect(result).to.equal(expected_output);
   });
@@ -303,10 +318,7 @@ describe("Reducers", () => {
         "tests/misc/forLoopOneLiner/forLoopOneLineIndentation.expected_output.txt"
       )
       .toString();
-    const pipeline = [
-      reducers.forLoopOneLiner,
-      reducers.lineIndentation,
-    ];
+    const pipeline = [reducers.forLoopOneLiner, reducers.lineIndentation];
 
     const result = pipeline.reduce(utils.applyReducer, input);
     chai.expect(result).to.equal(expected_output);

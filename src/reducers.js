@@ -133,11 +133,20 @@ module.exports = {
     var blockStart = 0;
     let input = Array.from(inputString);
     var quotesCounter = 0;
+    var isCommented = false;
+
+    const equals = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
     for (var i = 0; i < input.length; i++) {
+      if(i + LINE_ENDING.length < input.length && equals(input.slice(i, i + LINE_ENDING.length), LINE_ENDING.split(''))) {
+        isCommented = false;
+      }
+      else if(i + 2 < input.length && equals(input.slice(i, i + 2), ['/', '/'])) {
+        isCommented = true;
+      }
       switch (input[i]) {
         case "{":
-          if (quotesCounter % 2 == 1) {
+          if (quotesCounter % 2 == 1 || isCommented) {
             break;
           }
           if (blockStart != i - 1) {
@@ -150,7 +159,7 @@ module.exports = {
           indentation = indentation + 1;
           break;
         case "}":
-          if (quotesCounter % 2 == 1) {
+          if (quotesCounter % 2 == 1 || isCommented) {
             break;
           }
           if (blockStart != i - 1) {
