@@ -10,7 +10,6 @@ module.exports = {
       reducers.forLoopOneLiner,
       reducers.whileLoopOneLiner,
       reducers.ifOneLiner,
-      reducers.curlyBracesLineSplitting,
       reducers.lineIndentation,
       reducers.classDefinitionFormatting,
       reducers.ifHeaderFormatting,

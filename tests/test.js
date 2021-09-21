@@ -28,14 +28,6 @@ const filesDict = {
   ifOneLiner: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
   },
-  curlyBracesLineSplitting: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
-    expected_output: [
-      "1.expected_output.txt",
-      "2.expected_output.txt",
-      "3.expected_output.txt",
-    ],
-  },
 
   lineIndentationSimple: {
     input: ["simple.1.input.txt", "simple.2.input.txt", "simple.3.input.txt"],
@@ -223,25 +215,6 @@ describe("Reducers", () => {
     });
   });
 
-  it("curlyBracesLineSplitting", () => {
-    filesDict.curlyBracesLineSplitting.input.forEach((inputFileName) => {
-      const input = fs
-        .readFileSync("tests/misc/curlyBracesLineSplitting/" + inputFileName)
-        .toString();
-      const result = reducers.curlyBracesLineSplitting(input).split("\r\n");
-      const expectedOutput1 = new RegExp(/[\S]+.*?\{/);
-      const expectedOutput2 = new RegExp(/\{.*?[\S]+/);
-      const expectedOutput3 = new RegExp(/[\S]+.*?\}/);
-      const expectedOutput4 = new RegExp(/\}.*?[\S]+/);
-      result.forEach((line) => {
-        chai.expect(line).to.not.match(expectedOutput1);
-        chai.expect(line).to.not.match(expectedOutput2);
-        chai.expect(line).to.not.match(expectedOutput3);
-        chai.expect(line).to.not.match(expectedOutput4);
-      });
-    });
-  });
-
   it("lineIndentation simple", () => {
     const inputs = filesDict.lineIndentationSimple.input.map((fileName) => {
       return fs
@@ -303,6 +276,13 @@ describe("Reducers", () => {
     });
   });
 
+  it("lineIndentation string variable with braces inside", () => {
+    const input = "x = \"{0} {1}\"";
+    const expected_output = "x = \"{0} {1}\"\r\n";
+    const result = reducers.lineIndentation(input);
+    chai.expect(result).to.equal(expected_output);
+  });
+
   it("defaultpropertiesIndentation", () => {
     const input = fs
       .readFileSync("tests/misc/defaultproperties/indentation.input.txt")
@@ -325,7 +305,6 @@ describe("Reducers", () => {
       .toString();
     const pipeline = [
       reducers.forLoopOneLiner,
-      reducers.curlyBracesLineSplitting,
       reducers.lineIndentation,
     ];
 

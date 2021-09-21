@@ -50,7 +50,7 @@ module.exports = {
   },
 
   ifHeaderFormatting: function (input) {
-    const regexes = [[new RegExp("if[ |\t]*\\(", 'g'), "if ("]];
+    const regexes = [[new RegExp("if[ |\t]*\\(", "g"), "if ("]];
 
     return regexes.reduce(applyReplace, input);
   },
@@ -127,50 +127,44 @@ module.exports = {
     }
   },
 
-  curlyBracesLineSplitting: function (input) {
-    const lines = input.split(LINE_ENDING);
-    const regex1 = /([\S]+.*)\{/;
-    const regex2 = /\{(.*?[\S]+)/;
-    const regex3 = /([\S]+.*)\}/;
-    const regex4 = /\}(.*?[\S]+)/;
-    const allLines = lines.flatMap((line) => {
-      const result1 = line.replace(regex1, "$1" + LINE_ENDING + "{");
-      const result2 = result1.replace(regex2, "{" + LINE_ENDING + "$1");
-      const result3 = result2.replace(regex3, "$1" + LINE_ENDING + "}");
-      const result4 = result3.replace(regex4, "}" + LINE_ENDING + "$1");
-      return result4.split(LINE_ENDING);
-    });
-    const allLinesWithEndings = allLines.map((line) => line + LINE_ENDING);
-    const result = allLinesWithEndings.join("");
-    return result;
-  },
-
   lineIndentation: function (inputString) {
     var contentBlocks = [];
     var indentation = 0;
     var blockStart = 0;
     let input = Array.from(inputString);
+    var quotesCounter = 0;
 
     for (var i = 0; i < input.length; i++) {
-      if (input[i] == "{") {
-        if (blockStart != i - 1) {
-          contentBlocks.push(
-            new classes.ContentBlock(indentation, blockStart, i - 1)
-          );
-        }
-        contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
-        blockStart = i;
-        indentation = indentation + 1;
-      }
-      if (input[i] == "}") {
-        if (blockStart != i - 1) {
-          contentBlocks.push(
-            new classes.ContentBlock(indentation, blockStart, i - 1)
-          );
-        }
-        blockStart = i;
-        indentation = indentation - 1;
-        contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
+      switch (input[i]) {
+        case "{":
+          if (quotesCounter % 2 == 1) {
+            break;
+          }
+          if (blockStart != i - 1) {
+            contentBlocks.push(
+              new classes.ContentBlock(indentation, blockStart, i - 1)
+            );
+          }
+          contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
+          blockStart = i;
+          indentation = indentation + 1;
+          break;
+        case "}":
+          if (quotesCounter % 2 == 1) {
+            break;
+          }
+          if (blockStart != i - 1) {
+            contentBlocks.push(
+              new classes.ContentBlock(indentation, blockStart, i - 1)
+            );
+          }
+          blockStart = i;
+          indentation = indentation - 1;
+          contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
+          break;
+        case '"':
+          quotesCounter++;
+          break;
       }
     }
 
