@@ -14,4 +14,12 @@ module.exports = {
       this.lineContent = lineContent;
     }
   },
+
+  ContentBlock: class {
+    constructor(indentation, blockStart, blockEnd) {
+      this.indentation = indentation;
+      this.blockStart = blockStart;
+      this.blockEnd = blockEnd;
+    }
+  },
 };

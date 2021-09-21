@@ -1,3 +1,7 @@
+
+const classes = require("./classes");
+const utils = require("./utils");
+
 const INDENTATION_STRING = "    ";
 const LINE_ENDING = "\r\n";
 
@@ -135,6 +139,48 @@ module.exports = {
     })
     allLinesWithEndings = allLines.map((line) => line + LINE_ENDING);
     result = allLinesWithEndings.join("");
+    return result;
+  },
+
+  lineIndentation: function (inputString) {
+    var contentBlocks = [];
+    var indentation = 0;
+    var blockStart = 0;
+    let input = Array.from(inputString);
+  
+    for (i = 0; i < input.length; i++) {
+      if (input[i] == "{") {
+        contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i - 1));
+        contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
+        blockStart = i;
+        indentation = indentation + 1;
+      }
+      if (input[i] == "}") {
+        contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i - 1));
+        blockStart = i;
+        indentation = indentation - 1;
+        contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
+      }
+    }
+  
+    let splitIndexes = contentBlocks.map((c) => c.blockEnd);
+    let indentations = contentBlocks.map((c) => c.indentation);
+  
+    let contents = utils.splitArray(input, splitIndexes).map((content) => {
+      return content
+        .join("")
+        .replace(/^[\n|\r| ]*/, "")
+        .replace(/[\n|\r| ]*$/, "");
+    });
+  
+    let contentWithIndentation = utils.zip(contents, indentations);
+  
+    let result = contentWithIndentation
+      .map(([content, indentation]) => {
+        return INDENTATION_STRING.repeat(indentation) + content;
+      })
+      .join(LINE_ENDING);
+  
     return result;
   },
 };

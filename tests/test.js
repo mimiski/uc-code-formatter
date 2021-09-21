@@ -2,7 +2,6 @@ const chai = require("chai");
 const formatter = require("../src/formatter");
 const classes = require("../src/classes");
 const reducers = require("../src/reducers");
-const utils = require("../src/utils");
 
 const fs = require("fs");
 
@@ -35,6 +34,10 @@ const filesDict = {
       "2.expected_output.txt",
       "3.expected_output.txt",
     ],
+  },
+  lineIndentation: {
+    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    expected_output: "expected_output.txt",
   },
 };
 
@@ -203,16 +206,34 @@ describe("Reducers", () => {
         .readFileSync("tests/misc/curlyBracesLineSplitting/" + inputFileName)
         .toString();
       result = reducers.curlyBracesLineSplitting(input).split("\r\n");
-      const expectedOutput1 = new RegExp(/[\S]+.*?\{/)
-      const expectedOutput2 = new RegExp(/\{.*?[\S]+/)
-      const expectedOutput3 = new RegExp(/[\S]+.*?\}/)
-      const expectedOutput4 = new RegExp(/\}.*?[\S]+/)
+      const expectedOutput1 = new RegExp(/[\S]+.*?\{/);
+      const expectedOutput2 = new RegExp(/\{.*?[\S]+/);
+      const expectedOutput3 = new RegExp(/[\S]+.*?\}/);
+      const expectedOutput4 = new RegExp(/\}.*?[\S]+/);
       result.forEach((line) => {
         chai.expect(line).to.not.match(expectedOutput1);
         chai.expect(line).to.not.match(expectedOutput2);
         chai.expect(line).to.not.match(expectedOutput3);
         chai.expect(line).to.not.match(expectedOutput4);
-      })
+      });
+    });
+  });
+
+  it("lineIndentation", () => {
+    const inputs = filesDict.lineIndentation.input.map((fileName) => {
+      return fs
+        .readFileSync("tests/misc/lineIndentation/" + fileName)
+        .toString();
+    });
+    const expected_output = fs
+      .readFileSync(
+        "tests/misc/lineIndentation/" +
+          filesDict.lineIndentation.expected_output
+      )
+      .toString();
+    inputs.forEach((input) => {
+      result = reducers.lineIndentation(input);
+      chai.expect(result).to.equal(expected_output);
     });
   });
 });
