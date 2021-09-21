@@ -1,0 +1,4 @@
+defaultproperties
+{
+  x=1
+}

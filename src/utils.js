@@ -16,5 +16,9 @@ module.exports = {
 
   zip: function(a, b) {
     return a.map((k, i) => [k, b[i]]);
+  },
+  
+  applyReducer: function(x, f) {
+    return f(x);
   }
 }

@@ -2,6 +2,7 @@ const chai = require("chai");
 const formatter = require("../src/formatter");
 const classes = require("../src/classes");
 const reducers = require("../src/reducers");
+const utils = require("../src/utils");
 
 const fs = require("fs");
 
@@ -38,6 +39,10 @@ const filesDict = {
   lineIndentation: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
     expected_output: "expected_output.txt",
+  },
+  e2e: {
+    input: ["1.input.txt", "2.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
 };
 
@@ -235,5 +240,59 @@ describe("Reducers", () => {
       result = reducers.lineIndentation(input);
       chai.expect(result).to.equal(expected_output);
     });
+  });
+
+  it("defaultpropertiesIndentation", () => {
+    const input = fs
+      .readFileSync("tests/misc/defaultproperties/indentation.input.txt")
+      .toString();
+    const expected_output = fs
+      .readFileSync(
+        "tests/misc/defaultproperties/indentation.expected_output.txt"
+      )
+      .toString();
+    result = reducers.lineIndentation(input);
+    chai.expect(result).to.equal(expected_output);
+  });
+
+  it("forLoopOneLinerWithIndentation", () => {
+    const input = "for (i = 0; i < 5; i++) a();";
+    const expected_output = fs
+      .readFileSync(
+        "tests/misc/forLoopOneLiner/forLoopOneLineIndentation.expected_output.txt"
+      )
+      .toString();
+    const pipeline = [
+      reducers.forLoopOneLiner,
+      reducers.curlyBracesLineSplitting,
+      reducers.lineIndentation,
+    ];
+
+    result = pipeline.reduce(utils.applyReducer, input);
+    chai.expect(result).to.equal(expected_output);
+  });
+});
+
+describe("Formatter", () => {
+  it("e2e", () => {
+    const input = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[0])
+      .toString();
+    const expected_output = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[0])
+      .toString();
+    result = formatter.formatCode(input);
+    chai.expect(result).to.equal(expected_output);
+  });
+
+  it("whitespaces", () => {
+    const input = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[1])
+      .toString();
+    const expected_output = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[1])
+      .toString();
+    result = formatter.formatCode(input);
+    chai.expect(result).to.equal(expected_output);
   });
 });

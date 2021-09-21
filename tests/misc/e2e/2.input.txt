@@ -1,0 +1,6 @@
+  
+    
+var bool a;   
+ 
+var bool b;     
+  

@@ -1,4 +1,3 @@
-
 const classes = require("./classes");
 const utils = require("./utils");
 
@@ -17,16 +16,19 @@ module.exports = {
       return index > 0 ? 1 : 0;
     }
     let regex = new RegExp(regexes.classDefinition, "g");
-    let classDefinition = input.match(regex)[0];
-    let lines = classDefinition.split("\n");
-    console.log(lines);
-    let result = lines
-      .map((line, index) => [line.trim(), indentationFunc(index)])
-      .map(
-        ([line, indentation]) => INDENTATION_STRING.repeat(indentation) + line
-      )
-      .join(LINE_ENDING);
-    return result;
+    if (input.match(regex) != null) {
+      let classDefinition = input.match(regex)[0];
+      let lines = classDefinition.split("\n");
+      let result = lines
+        .map((line, index) => [line.trim(), indentationFunc(index)])
+        .map(
+          ([line, indentation]) => INDENTATION_STRING.repeat(indentation) + line
+        )
+        .join(LINE_ENDING);
+      return result;
+    } else {
+      return input;
+    }
   },
 
   repeatedNewlineFormatting: function (input) {
@@ -110,7 +112,7 @@ module.exports = {
   },
 
   forLoopOneLiner: function (input) {
-    return input.replace(/(for[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/, "$1{$2}");
+    return input.replace(/(for[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]+;)/, "$1{$2}");
   },
 
   whileLoopOneLiner: function (input) {
@@ -136,7 +138,7 @@ module.exports = {
       const result3 = result2.replace(regex3, "$1" + LINE_ENDING + "}");
       const result4 = result3.replace(regex4, "}" + LINE_ENDING + "$1");
       return result4.split(LINE_ENDING);
-    })
+    });
     allLinesWithEndings = allLines.map((line) => line + LINE_ENDING);
     result = allLinesWithEndings.join("");
     return result;
@@ -147,40 +149,55 @@ module.exports = {
     var indentation = 0;
     var blockStart = 0;
     let input = Array.from(inputString);
-  
+
     for (i = 0; i < input.length; i++) {
       if (input[i] == "{") {
-        contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i - 1));
+        contentBlocks.push(
+          new classes.ContentBlock(indentation, blockStart, i - 1)
+        );
         contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
         blockStart = i;
         indentation = indentation + 1;
       }
       if (input[i] == "}") {
-        contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i - 1));
+        contentBlocks.push(
+          new classes.ContentBlock(indentation, blockStart, i - 1)
+        );
         blockStart = i;
         indentation = indentation - 1;
         contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
       }
     }
-  
+
+    contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i));
+
     let splitIndexes = contentBlocks.map((c) => c.blockEnd);
     let indentations = contentBlocks.map((c) => c.indentation);
-  
-    let contents = utils.splitArray(input, splitIndexes).map((content) => {
-      return content
-        .join("")
-        .replace(/^[\n|\r| ]*/, "")
-        .replace(/[\n|\r| ]*$/, "");
-    });
-  
-    let contentWithIndentation = utils.zip(contents, indentations);
-  
-    let result = contentWithIndentation
-      .map(([content, indentation]) => {
-        return INDENTATION_STRING.repeat(indentation) + content;
+
+    let contentStrings = utils
+      .splitArray(input, splitIndexes)
+      .map((content) => content.join(""))
+      .map((content) => content.replace(/^[\n|\r| ]*/, ""))
+      .map((content) => content.replace(/[\n|\r| ]*$/, ""));
+
+    let linesWithIndentation = utils
+      .zip(contentStrings, indentations)
+      .flatMap(([content, indentation]) => {
+        return content.split(LINE_ENDING).map((e) => [e, indentation]);
+      });
+
+    let result = linesWithIndentation
+      .map(([line, indentation]) => {
+        if (line != "") {
+          let pass0 = line.replace(/^[\n|\r| ]*/, "");
+          let pass1 = pass0.replace(/[\n|\r| ]*$/, "");
+          return INDENTATION_STRING.repeat(indentation) + pass1 + LINE_ENDING;
+        } else {
+          return "";
+        }
       })
-      .join(LINE_ENDING);
-  
+      .join("");
+
     return result;
   },
 };
