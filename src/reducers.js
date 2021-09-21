@@ -151,7 +151,7 @@ module.exports = {
     var blockStart = 0;
     let input = Array.from(inputString);
 
-    for (i = 0; i < input.length; i++) {
+    for (var i = 0; i < input.length; i++) {
       if (input[i] == "{") {
         if (blockStart != i - 1) {
           contentBlocks.push(
