@@ -1,0 +1,15 @@
+class Asdf extends
+dependenson(Qwerty);
+
+var bool i;
+
+function Test(int i, bool b)
+{
+ for(i = 0; i < 5; i++) 
+    a();   
+  if(i > 5
+    && x > 5) {   
+    if(i < 2)  
+    b();  
+  }   
+}

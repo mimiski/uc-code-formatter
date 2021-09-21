@@ -36,9 +36,15 @@ const filesDict = {
       "3.expected_output.txt",
     ],
   },
+
   lineIndentationSimple: {
     input: ["simple.1.input.txt", "simple.2.input.txt", "simple.3.input.txt"],
     expected_output: "simple.expected_output.txt",
+  },
+
+  ifMultilineHeaderAlignment: {
+    input: ["1.input.txt", "2.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
 
   lineIndentationHierarchical: {
@@ -51,11 +57,12 @@ const filesDict = {
   },
 
   e2e: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    input: ["1.input.txt", "2.input.txt", "3.input.txt", "4.input.txt"],
     expected_output: [
       "1.expected_output.txt",
       "2.expected_output.txt",
       "3.expected_output.txt",
+      "4.expected_output.txt",
     ],
   },
 };
@@ -140,13 +147,26 @@ describe("Reducers", () => {
 
   it("ifHeaderFormatting - flag", () => {
     const inputs = [
-      "if(bFlag)",
       "if (bFlag)",
-      "if(bFlag)",
       "if   (bFlag)",
+      "if(bFlag)",
       "if        (bFlag)",
     ];
     const expected_output = "if (bFlag)";
+    inputs.forEach((input) => {
+      result = reducers.ifHeaderFormatting(input);
+      chai.expect(result).to.equal(expected_output);
+    });
+  });
+
+  it("ifHeaderFormatting - expr op expr", () => {
+    const inputs = [
+      "if (i < 5){",
+      "if   (i < 5){",
+      "if(i < 5){",
+      "if        (i < 5){",
+    ];
+    const expected_output = "if (i < 5){";
     inputs.forEach((input) => {
       result = reducers.ifHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output);
@@ -157,8 +177,8 @@ describe("Reducers", () => {
     const inputs = [
       "switch(bFlag)",
       "switch (bFlag)",
-      "switch( bFlag)",
-      "switch(bFlag )",
+      "switch   (bFlag)",
+      "switch       (bFlag)",
     ];
     const expected_output = "switch (bFlag)";
     inputs.forEach((input) => {
@@ -236,6 +256,29 @@ describe("Reducers", () => {
       .toString();
     inputs.forEach((input) => {
       result = reducers.lineIndentation(input);
+      chai.expect(result).to.equal(expected_output);
+    });
+  });
+
+  it("ifMultilineHeaderAlignment", () => {
+    const inputs = filesDict.ifMultilineHeaderAlignment.input.map(
+      (fileName) => {
+        return fs
+          .readFileSync("tests/misc/ifMultilineHeaderAlignment/" + fileName)
+          .toString();
+      }
+    );
+    const expected_outputs =
+      filesDict.ifMultilineHeaderAlignment.expected_output.map((fileName) =>
+        fs
+          .readFileSync("tests/misc/ifMultilineHeaderAlignment/" + fileName)
+          .toString()
+      );
+
+    const tests = utils.zip(inputs, expected_outputs);
+
+    tests.forEach(([input, expected_output]) => {
+      result = reducers.ifMultilineHeaderAlignment(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -323,5 +366,16 @@ describe("Formatter", () => {
       .toString();
     result = formatter.formatCode(input);
     chai.expect(result).to.equal(expected_output);
+  });
+
+  it("multiline condition alignment", () => {
+    const input = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[3])
+      .toString();
+    const y = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[3])
+      .toString();
+    const x = formatter.formatCode(input);
+    chai.expect(x).to.equal(y);
   });
 });

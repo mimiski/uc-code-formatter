@@ -44,17 +44,13 @@ module.exports = {
   },
 
   forLoopHeaderFormatting: function (input) {
-    const regexes = [
-      [new RegExp("for[ |\t]*\\(", "g"), "for ("],
-    ];
+    const regexes = [[new RegExp("for[ |\t]*\\(", "g"), "for ("]];
 
     return regexes.reduce(applyReplace, input);
   },
 
   ifHeaderFormatting: function (input) {
-    const regexes = [
-      [new RegExp("if[ |\t]*\\(", "g"), "if ("],
-    ];
+    const regexes = [[new RegExp("if[ |\t]*\\(", 'g'), "if ("]];
 
     return regexes.reduce(applyReplace, input);
   },
@@ -71,26 +67,64 @@ module.exports = {
   },
 
   whileLoopHeader: function (input) {
-    const regexes = [
-      [new RegExp("while[ |\t]*\\(", "g"), "while ("],
-    ];
+    const regexes = [[new RegExp("while[ |\t]*\\(", "g"), "while ("]];
 
     return regexes.reduce(applyReplace, input);
   },
 
   forLoopOneLiner: function (input) {
-    return input.replace(/(for[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]+;)/, "$1{$2}");
+    return input.replace(
+      /(\bfor\b[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]+;)/,
+      "$1{$2}"
+    );
   },
 
   whileLoopOneLiner: function (input) {
     return input.replace(
-      /(while[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/,
+      /(\bwhile[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/,
       "$1{$2}"
     );
   },
 
   ifOneLiner: function (input) {
     return input.replace(/(if[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/, "$1{$2}");
+  },
+
+  ifMultilineHeaderAlignment: function (input) {
+    const regex = new RegExp("[ |\t]*if \\(([^;{}]|\n|\r|\\(|\\))+\\)", "g");
+    const matches = input.match(regex);
+    if (matches != null) {
+      const replacements = matches.map((match) => {
+        if (match.includes(LINE_ENDING)) {
+          const lines = match.split(LINE_ENDING);
+          return lines
+            .map((lineContent, index) => {
+              if (index > 0) {
+                if (index < lines.length - 1) {
+                  return INDENTATION_STRING + lineContent + LINE_ENDING;
+                } else {
+                  return INDENTATION_STRING + lineContent;
+                }
+              } else {
+                return lineContent + LINE_ENDING;
+              }
+            })
+            .join("");
+        } else {
+          return match;
+        }
+      });
+      const matchesVsReplacements = utils
+        .zip(matches, replacements)
+        .filter(([match, replacement]) => match != replacement);
+      var result = input;
+      matchesVsReplacements.forEach(([match, replacement]) => {
+        result = result.replace(match, replacement);
+      });
+      return result;
+    } else {
+      return input;
+    }
   },
 
   curlyBracesLineSplitting: function (input) {
@@ -157,6 +191,8 @@ module.exports = {
       .flatMap(([content, indentation]) => {
         return content.split(LINE_ENDING).map((e) => [e, indentation]);
       });
+
+    let additionalIndentation = linesWithIndentation.map((e) => 0);
 
     let result = linesWithIndentation
       .map(([line, indentation]) => {

@@ -7,15 +7,16 @@ module.exports = {
   
   formatCode: function(input) {
     let formatters = [
-      reducers.forLoopHeaderFormatting,
       reducers.forLoopOneLiner,
       reducers.whileLoopOneLiner,
-      reducers.whileLoopHeader,
       reducers.ifOneLiner,
-      reducers.ifHeaderFormatting,
       reducers.curlyBracesLineSplitting,
       reducers.lineIndentation,
       reducers.classDefinitionFormatting,
+      reducers.ifHeaderFormatting,
+      reducers.whileLoopHeader,
+      reducers.forLoopHeaderFormatting,
+      reducers.ifMultilineHeaderAlignment,
       reducers.repeatedNewlineFormatting,
     ];
   
