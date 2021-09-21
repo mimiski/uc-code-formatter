@@ -43,51 +43,9 @@ module.exports = {
     return result;
   },
 
-  loopHeaderFormatting: function (input) {
+  forLoopHeaderFormatting: function (input) {
     const regexes = [
       [new RegExp("for[ |\t]*\\(", "g"), "for ("],
-      [
-        new RegExp(
-          "for \\([ |\t]*([a-zA-Z0-9]+)[ |\t]*([=]*)[ |\t]*([a-zA-Z0-9]+)[ |\t]*;",
-          "g"
-        ),
-        "for ($1 $2 $3;",
-      ],
-      [new RegExp("for \\([ |\t]*;", "g"), "for ( ;"],
-      [
-        new RegExp(
-          "for \\((.*?);[ |\t]*([a-zA-Z0-9]+)[ |\t]*([<|>|==|<=|>=]+)[ |\t]*([a-zA-Z0-9]+)[ |\t]*;",
-          "g"
-        ),
-        "for ($1; $2 $3 $4;",
-      ],
-      [
-        new RegExp("for \\((.*?);[ |\t]*([a-zA-Z0-9]+)[ |\t]*;", "g"),
-        "for ($1; $2;",
-      ],
-      [new RegExp("for \\((.*?);[ |\t]*;", "g"), "for ($1; ;"],
-      [
-        new RegExp(
-          "for \\((.*?);(.*?);[ |\t]*([a-zA-Z0-9]+)[ |\t]*([=]*)[ |\t]*([a-zA-Z0-9]+)[ |\t]*\\)",
-          "g"
-        ),
-        "for ($1; $2; $3 $4 $5)",
-      ],
-      [
-        new RegExp(
-          "for \\((.*?);(.*?);[ |\t]*([a-zA-Z0-9]+)\\+\\+[ |\t]*\\)",
-          "g"
-        ),
-        "for ($1;$2; $3++)",
-      ],
-      [
-        new RegExp(
-          "for \\((.*?);(.*?);[ |\t]*\\+\\+([a-zA-Z0-9]+)[ |\t]*\\)",
-          "g"
-        ),
-        "for ($1;$2; ++$3)",
-      ],
-      [new RegExp("for \\((.*?);(.*?);[ |\t]*\\)", "g"), "for ($1;$2; )"],
     ];
 
     return regexes.reduce(applyReplace, input);
@@ -95,7 +53,7 @@ module.exports = {
 
   ifHeaderFormatting: function (input) {
     const regexes = [
-      [new RegExp("if[ |\t]*\\([ |\t]*(.+?)[ |\t]*\\)", "g"), "if ($1)"],
+      [new RegExp("if[ |\t]*\\(", "g"), "if ("],
     ];
 
     return regexes.reduce(applyReplace, input);
@@ -107,6 +65,14 @@ module.exports = {
         new RegExp("switch[ |\t]*\\([ |\t]*(.+?)[ |\t]*\\)", "g"),
         "switch ($1)",
       ],
+    ];
+
+    return regexes.reduce(applyReplace, input);
+  },
+
+  whileLoopHeader: function (input) {
+    const regexes = [
+      [new RegExp("while[ |\t]*\\(", "g"), "while ("],
     ];
 
     return regexes.reduce(applyReplace, input);

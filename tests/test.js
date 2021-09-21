@@ -15,7 +15,7 @@ const filesDict = {
     input: "repeatedNewlineFormatting.input.txt",
     expected_output: "repeatedNewlineFormatting.expected_output.txt",
   },
-  loopHeaderFormatting: {
+  forLoopHeaderFormatting: {
     input: ["1.input.txt", "2.input.txt"],
     expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
@@ -42,13 +42,21 @@ const filesDict = {
   },
 
   lineIndentationHierarchical: {
-    input: ["hierarchical.2.input.txt", "hierarchical.1.input.txt", "hierarchical.3.input.txt"],
+    input: [
+      "hierarchical.2.input.txt",
+      "hierarchical.1.input.txt",
+      "hierarchical.3.input.txt",
+    ],
     expected_output: "hierarchical.expected_output.txt",
   },
 
   e2e: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
-    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
+    expected_output: [
+      "1.expected_output.txt",
+      "2.expected_output.txt",
+      "3.expected_output.txt",
+    ],
   },
 };
 
@@ -108,83 +116,36 @@ describe("Reducers", () => {
     chai.expect(result).to.equal(expected_output);
   });
 
-  it("loopHeaderFormatting - all entries present", () => {
+  it("forLoopHeaderFormatting - all entries present", () => {
     const inputs_1 = [
-      "for( i=   0;    i   <  1;     i++   )",
       "for(i=0;i<1;i++)",
       "for (i=0;i<1;i++)",
-      "for( i=0;i<1;i++)",
-      "for(i =0;i<1;i++)",
-      "for(i= 0;i<1;i++)",
-      "for(i=0 ;i<1;i++)",
-      "for(i=0; i<1;i++)",
-      "for(i=0;i <1;i++)",
-      "for(i=0;i< 1;i++)",
-      "for(i=0;i<1 ;i++)",
-      "for(i=0;i<1; i++)",
-      "for(i=0;i<1;i++ )",
+      "for   (i=0;i<1;i++)",
     ];
-    const expected_output_1 = "for (i = 0; i < 1; i++)";
+    const expected_output_1 = "for (i=0;i<1;i++)";
     inputs_1.forEach((input) => {
-      result = reducers.loopHeaderFormatting(input);
+      result = reducers.forLoopHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output_1);
     });
   });
 
-  it("loopHeaderFormatting - first entry absent", () => {
-    const inputs_2 = ["for(;i<1;i++ )", "for( ;i<1;i++ )", "for(   ;i<1;i++ )"];
-    const expected_output_2 = "for ( ; i < 1; i++)";
-    inputs_2.forEach((input) => {
-      result = reducers.loopHeaderFormatting(input);
-      chai.expect(result).to.equal(expected_output_2);
+  it("whileLoopHeaderFormatting - space between while and parentheses", () => {
+    const inputs = ["while(i < 5)", "while  (i < 5)", "while      (i < 5)"];
+    const expected_output = "while (i < 5)";
+    inputs.forEach((input) => {
+      result = reducers.whileLoopHeader(input);
+      chai.expect(result).to.equal(expected_output);
     });
   });
 
-  it("loopHeaderFormatting - second entry absent", () => {
-    const inputs_3 = [
-      "for (i = 0;; i++)",
-      "for (i = 0; ; i++)",
-      "for (i = 0;  ; i++)",
-      "for (i = 0;       ; i++)",
+  it("ifHeaderFormatting - flag", () => {
+    const inputs = [
+      "if(bFlag)",
+      "if (bFlag)",
+      "if(bFlag)",
+      "if   (bFlag)",
+      "if        (bFlag)",
     ];
-    const expected_output_3 = "for (i = 0; ; i++)";
-    inputs_3.forEach((input) => {
-      result = reducers.loopHeaderFormatting(input);
-      chai.expect(result).to.equal(expected_output_3);
-    });
-  });
-
-  it("loopHeaderFormatting - second entry flag", () => {
-    const inputs_3 = [
-      "for (i = 0;bFlag; i++)",
-      "for (i = 0;bFlag ; i++)",
-      "for (i = 0; bFlag; i++)",
-      "for (i = 0; bFlag ; i++)",
-      "for (i = 0;    bFlag  ; i++)",
-    ];
-    const expected_output_3 = "for (i = 0; bFlag; i++)";
-    inputs_3.forEach((input) => {
-      result = reducers.loopHeaderFormatting(input);
-      chai.expect(result).to.equal(expected_output_3);
-    });
-  });
-
-  it("loopHeaderFormatting - third entry absent", () => {
-    const inputs_3 = [
-      "for (i = 0; i < 5;)",
-      "for (i = 0; i < 5; )",
-      "for (i = 0; i < 5;  )",
-      "for (i = 0; i < 5;       )",
-    ];
-    const expected_output_3 = "for (i = 0; i < 5; )";
-    inputs_3.forEach((input) => {
-      result = reducers.loopHeaderFormatting(input);
-      chai.expect(result).to.equal(expected_output_3);
-    });
-  });
-
-  it("ifHeaderFormatting", () => {
-    const inputs = ["if(bFlag)", "if (bFlag)", "if( bFlag)", "if(bFlag )"];
     const expected_output = "if (bFlag)";
     inputs.forEach((input) => {
       result = reducers.ifHeaderFormatting(input);
@@ -280,11 +241,13 @@ describe("Reducers", () => {
   });
 
   it("lineIndentation hierarchical", () => {
-    const inputs = filesDict.lineIndentationHierarchical.input.map((fileName) => {
-      return fs
-        .readFileSync("tests/misc/lineIndentation/" + fileName)
-        .toString();
-    });
+    const inputs = filesDict.lineIndentationHierarchical.input.map(
+      (fileName) => {
+        return fs
+          .readFileSync("tests/misc/lineIndentation/" + fileName)
+          .toString();
+      }
+    );
     const expected_output = fs
       .readFileSync(
         "tests/misc/lineIndentation/" +
