@@ -8,8 +8,8 @@ const fs = require("fs");
 
 const filesDict = {
   classDefinition: {
-    input: "classDefinition.input.txt",
-    expected_output: "classDefinition.expected_output.txt",
+    input: ["1.input.txt", "2.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
   repeatedNewlineFormatting: {
     input: "repeatedNewlineFormatting.input.txt",
@@ -41,20 +41,51 @@ const filesDict = {
     expected_output: "expected_output.txt",
   },
   e2e: {
-    input: ["1.input.txt", "2.input.txt"],
-    expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
+    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
   },
 };
 
 describe("Reducers", () => {
-  it("classDefinition", () => {
+  it("classDefinition indentation", () => {
     const input = fs
-      .readFileSync("tests/misc/" + filesDict.classDefinition.input)
+      .readFileSync(
+        "tests/misc/classDefinition/" + filesDict.classDefinition.input[0]
+      )
       .toString();
     const expected_output = fs
-      .readFileSync("tests/misc/" + filesDict.classDefinition.expected_output)
+      .readFileSync(
+        "tests/misc/classDefinition/" +
+          filesDict.classDefinition.expected_output[0]
+      )
       .toString();
-    result = reducers.classDefinitionFormatting(input);
+    const pipeline = [
+      reducers.classDefinitionFormatting,
+      reducers.repeatedNewlineFormatting,
+    ];
+
+    result = pipeline.reduce(utils.applyReducer, input);
+    chai.expect(result).to.equal(expected_output);
+  });
+
+  it("classDefinition with vars below", () => {
+    const input = fs
+      .readFileSync(
+        "tests/misc/classDefinition/" + filesDict.classDefinition.input[1]
+      )
+      .toString();
+    const expected_output = fs
+      .readFileSync(
+        "tests/misc/classDefinition/" +
+          filesDict.classDefinition.expected_output[1]
+      )
+      .toString();
+    const pipeline = [
+      reducers.classDefinitionFormatting,
+      reducers.repeatedNewlineFormatting,
+    ];
+
+    result = pipeline.reduce(utils.applyReducer, input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -274,15 +305,26 @@ describe("Reducers", () => {
 });
 
 describe("Formatter", () => {
-  it("e2e", () => {
+  it("e2e simple", () => {
     const input = fs
       .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[0])
       .toString();
-    const expected_output = fs
+    const y = fs
       .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[0])
       .toString();
-    result = formatter.formatCode(input);
-    chai.expect(result).to.equal(expected_output);
+    const x = formatter.formatCode(input);
+    chai.expect(x).to.equal(y);
+  });
+
+  it("e2e with hierarchical code blocks", () => {
+    const input = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[2])
+      .toString();
+    const y = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[2])
+      .toString();
+    const x = formatter.formatCode(input);
+    chai.expect(x).to.equal(y);
   });
 
   it("whitespaces", () => {

@@ -1,0 +1,4 @@
+class Asdf extends Xyz
+dependson(Qwerty);
+
+var bool x;

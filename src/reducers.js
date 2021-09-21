@@ -15,17 +15,17 @@ module.exports = {
     function indentationFunc(index) {
       return index > 0 ? 1 : 0;
     }
-    let regex = new RegExp(regexes.classDefinition, "g");
+    let regex = new RegExp(regexes.classDefinition);
     if (input.match(regex) != null) {
       let classDefinition = input.match(regex)[0];
-      let lines = classDefinition.split("\n");
+      let lines = classDefinition.split(LINE_ENDING);
       let result = lines
         .map((line, index) => [line.trim(), indentationFunc(index)])
         .map(
-          ([line, indentation]) => INDENTATION_STRING.repeat(indentation) + line
+          ([line, indentation]) => INDENTATION_STRING.repeat(indentation) + line + LINE_ENDING
         )
-        .join(LINE_ENDING);
-      return result;
+        .join("");
+      return input.replace(regex, result);
     } else {
       return input;
     }
@@ -178,23 +178,20 @@ module.exports = {
       .splitArray(input, splitIndexes)
       .map((content) => content.join(""))
       .map((content) => content.replace(/^[\n|\r| ]*/, ""))
-      .map((content) => content.replace(/[\n|\r| ]*$/, ""));
+      .map((content) => content.replace(/[\n|\r| ]*$/, ""))
 
     let linesWithIndentation = utils
       .zip(contentStrings, indentations)
+      .filter(([content, indentation]) => content != "")
       .flatMap(([content, indentation]) => {
         return content.split(LINE_ENDING).map((e) => [e, indentation]);
       });
 
     let result = linesWithIndentation
       .map(([line, indentation]) => {
-        if (line != "") {
-          let pass0 = line.replace(/^[\n|\r| ]*/, "");
-          let pass1 = pass0.replace(/[\n|\r| ]*$/, "");
-          return INDENTATION_STRING.repeat(indentation) + pass1 + LINE_ENDING;
-        } else {
-          return "";
-        }
+        let pass0 = line.replace(/^[\n|\r| ]*/, "");
+        let pass1 = pass0.replace(/[\n|\r| ]*$/, "");
+        return INDENTATION_STRING.repeat(indentation) + pass1 + LINE_ENDING;
       })
       .join("");
 
