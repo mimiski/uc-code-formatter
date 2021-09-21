@@ -85,7 +85,7 @@ describe("Reducers", () => {
       reducers.repeatedNewlineFormatting,
     ];
 
-    result = pipeline.reduce(utils.applyReducer, input);
+    const result = pipeline.reduce(utils.applyReducer, input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -106,7 +106,7 @@ describe("Reducers", () => {
       reducers.repeatedNewlineFormatting,
     ];
 
-    result = pipeline.reduce(utils.applyReducer, input);
+    const result = pipeline.reduce(utils.applyReducer, input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -119,7 +119,7 @@ describe("Reducers", () => {
         "tests/misc/" + filesDict.repeatedNewlineFormatting.expected_output
       )
       .toString();
-    result = reducers.repeatedNewlineFormatting(input);
+    const result = reducers.repeatedNewlineFormatting(input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -131,7 +131,7 @@ describe("Reducers", () => {
     ];
     const expected_output_1 = "for (i=0;i<1;i++)";
     inputs_1.forEach((input) => {
-      result = reducers.forLoopHeaderFormatting(input);
+      const result = reducers.forLoopHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output_1);
     });
   });
@@ -140,7 +140,7 @@ describe("Reducers", () => {
     const inputs = ["while(i < 5)", "while  (i < 5)", "while      (i < 5)"];
     const expected_output = "while (i < 5)";
     inputs.forEach((input) => {
-      result = reducers.whileLoopHeader(input);
+      const result = reducers.whileLoopHeader(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -154,7 +154,7 @@ describe("Reducers", () => {
     ];
     const expected_output = "if (bFlag)";
     inputs.forEach((input) => {
-      result = reducers.ifHeaderFormatting(input);
+      const result = reducers.ifHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -168,7 +168,7 @@ describe("Reducers", () => {
     ];
     const expected_output = "if (i < 5){";
     inputs.forEach((input) => {
-      result = reducers.ifHeaderFormatting(input);
+      const result = reducers.ifHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -182,7 +182,7 @@ describe("Reducers", () => {
     ];
     const expected_output = "switch (bFlag)";
     inputs.forEach((input) => {
-      result = reducers.switchHeaderFormatting(input);
+      const result = reducers.switchHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -192,7 +192,7 @@ describe("Reducers", () => {
       const input = fs
         .readFileSync("tests/misc/forLoopOneLiner/" + fileName)
         .toString();
-      result = reducers.forLoopOneLiner(input);
+      const result = reducers.forLoopOneLiner(input);
       chai
         .expect(result)
         .to.match(new RegExp("for[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
@@ -204,7 +204,7 @@ describe("Reducers", () => {
       const input = fs
         .readFileSync("tests/misc/whileLoopOneLiner/" + fileName)
         .toString();
-      result = reducers.whileLoopOneLiner(input);
+      const result = reducers.whileLoopOneLiner(input);
       chai
         .expect(result)
         .to.match(new RegExp("while[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
@@ -216,7 +216,7 @@ describe("Reducers", () => {
       const input = fs
         .readFileSync("tests/misc/ifOneLiner/" + fileName)
         .toString();
-      result = reducers.ifOneLiner(input);
+      const result = reducers.ifOneLiner(input);
       chai
         .expect(result)
         .to.match(new RegExp("if[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
@@ -228,7 +228,7 @@ describe("Reducers", () => {
       const input = fs
         .readFileSync("tests/misc/curlyBracesLineSplitting/" + inputFileName)
         .toString();
-      result = reducers.curlyBracesLineSplitting(input).split("\r\n");
+      const result = reducers.curlyBracesLineSplitting(input).split("\r\n");
       const expectedOutput1 = new RegExp(/[\S]+.*?\{/);
       const expectedOutput2 = new RegExp(/\{.*?[\S]+/);
       const expectedOutput3 = new RegExp(/[\S]+.*?\}/);
@@ -255,7 +255,7 @@ describe("Reducers", () => {
       )
       .toString();
     inputs.forEach((input) => {
-      result = reducers.lineIndentation(input);
+      const result = reducers.lineIndentation(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -278,7 +278,7 @@ describe("Reducers", () => {
     const tests = utils.zip(inputs, expected_outputs);
 
     tests.forEach(([input, expected_output]) => {
-      result = reducers.ifMultilineHeaderAlignment(input);
+      const result = reducers.ifMultilineHeaderAlignment(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -298,7 +298,7 @@ describe("Reducers", () => {
       )
       .toString();
     inputs.forEach((input) => {
-      result = reducers.lineIndentation(input);
+      const result = reducers.lineIndentation(input);
       chai.expect(result).to.equal(expected_output);
     });
   });
@@ -312,7 +312,7 @@ describe("Reducers", () => {
         "tests/misc/defaultproperties/indentation.expected_output.txt"
       )
       .toString();
-    result = reducers.lineIndentation(input);
+    const result = reducers.lineIndentation(input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -329,7 +329,7 @@ describe("Reducers", () => {
       reducers.lineIndentation,
     ];
 
-    result = pipeline.reduce(utils.applyReducer, input);
+    const result = pipeline.reduce(utils.applyReducer, input);
     chai.expect(result).to.equal(expected_output);
   });
 });
@@ -364,7 +364,7 @@ describe("Formatter", () => {
     const expected_output = fs
       .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[1])
       .toString();
-    result = formatter.formatCode(input);
+    const result = formatter.formatCode(input);
     chai.expect(result).to.equal(expected_output);
   });
 

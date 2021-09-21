@@ -133,15 +133,15 @@ module.exports = {
     const regex2 = /\{(.*?[\S]+)/;
     const regex3 = /([\S]+.*)\}/;
     const regex4 = /\}(.*?[\S]+)/;
-    allLines = lines.flatMap((line) => {
+    const allLines = lines.flatMap((line) => {
       const result1 = line.replace(regex1, "$1" + LINE_ENDING + "{");
       const result2 = result1.replace(regex2, "{" + LINE_ENDING + "$1");
       const result3 = result2.replace(regex3, "$1" + LINE_ENDING + "}");
       const result4 = result3.replace(regex4, "}" + LINE_ENDING + "$1");
       return result4.split(LINE_ENDING);
     });
-    allLinesWithEndings = allLines.map((line) => line + LINE_ENDING);
-    result = allLinesWithEndings.join("");
+    const allLinesWithEndings = allLines.map((line) => line + LINE_ENDING);
+    const result = allLinesWithEndings.join("");
     return result;
   },
 
