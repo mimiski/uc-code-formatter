@@ -22,7 +22,8 @@ module.exports = {
       let result = lines
         .map((line, index) => [line.trim(), indentationFunc(index)])
         .map(
-          ([line, indentation]) => INDENTATION_STRING.repeat(indentation) + line + LINE_ENDING
+          ([line, indentation]) =>
+            INDENTATION_STRING.repeat(indentation) + line + LINE_ENDING
         )
         .join("");
       return input.replace(regex, result);
@@ -152,17 +153,21 @@ module.exports = {
 
     for (i = 0; i < input.length; i++) {
       if (input[i] == "{") {
-        contentBlocks.push(
-          new classes.ContentBlock(indentation, blockStart, i - 1)
-        );
+        if (blockStart != i - 1) {
+          contentBlocks.push(
+            new classes.ContentBlock(indentation, blockStart, i - 1)
+          );
+        }
         contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
         blockStart = i;
         indentation = indentation + 1;
       }
       if (input[i] == "}") {
-        contentBlocks.push(
-          new classes.ContentBlock(indentation, blockStart, i - 1)
-        );
+        if (blockStart != i - 1) {
+          contentBlocks.push(
+            new classes.ContentBlock(indentation, blockStart, i - 1)
+          );
+        }
         blockStart = i;
         indentation = indentation - 1;
         contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
@@ -171,14 +176,14 @@ module.exports = {
 
     contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i));
 
-    let splitIndexes = contentBlocks.map((c) => c.blockEnd);
-    let indentations = contentBlocks.map((c) => c.indentation);
+    const splitIndexes = contentBlocks.map((c) => c.blockEnd);
+    const indentations = contentBlocks.map((c) => c.indentation);
 
     let contentStrings = utils
       .splitArray(input, splitIndexes)
       .map((content) => content.join(""))
       .map((content) => content.replace(/^[\n|\r| ]*/, ""))
-      .map((content) => content.replace(/[\n|\r| ]*$/, ""))
+      .map((content) => content.replace(/[\n|\r| ]*$/, ""));
 
     let linesWithIndentation = utils
       .zip(contentStrings, indentations)

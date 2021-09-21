@@ -36,10 +36,16 @@ const filesDict = {
       "3.expected_output.txt",
     ],
   },
-  lineIndentation: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
-    expected_output: "expected_output.txt",
+  lineIndentationSimple: {
+    input: ["simple.1.input.txt", "simple.2.input.txt", "simple.3.input.txt"],
+    expected_output: "simple.expected_output.txt",
   },
+
+  lineIndentationHierarchical: {
+    input: ["hierarchical.2.input.txt", "hierarchical.1.input.txt", "hierarchical.3.input.txt"],
+    expected_output: "hierarchical.expected_output.txt",
+  },
+
   e2e: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
     expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
@@ -255,8 +261,8 @@ describe("Reducers", () => {
     });
   });
 
-  it("lineIndentation", () => {
-    const inputs = filesDict.lineIndentation.input.map((fileName) => {
+  it("lineIndentation simple", () => {
+    const inputs = filesDict.lineIndentationSimple.input.map((fileName) => {
       return fs
         .readFileSync("tests/misc/lineIndentation/" + fileName)
         .toString();
@@ -264,7 +270,25 @@ describe("Reducers", () => {
     const expected_output = fs
       .readFileSync(
         "tests/misc/lineIndentation/" +
-          filesDict.lineIndentation.expected_output
+          filesDict.lineIndentationSimple.expected_output
+      )
+      .toString();
+    inputs.forEach((input) => {
+      result = reducers.lineIndentation(input);
+      chai.expect(result).to.equal(expected_output);
+    });
+  });
+
+  it("lineIndentation hierarchical", () => {
+    const inputs = filesDict.lineIndentationHierarchical.input.map((fileName) => {
+      return fs
+        .readFileSync("tests/misc/lineIndentation/" + fileName)
+        .toString();
+    });
+    const expected_output = fs
+      .readFileSync(
+        "tests/misc/lineIndentation/" +
+          filesDict.lineIndentationHierarchical.expected_output
       )
       .toString();
     inputs.forEach((input) => {
