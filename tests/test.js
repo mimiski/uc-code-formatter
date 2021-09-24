@@ -335,7 +335,7 @@ describe("Formatter", () => {
     const y = fs
       .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[4])
       .toString();
-    const x = formatter.formatCode(input, true);
+    const x = formatter.formatCode(input);
     chai.expect(x).to.equal(y);
   });
 });
