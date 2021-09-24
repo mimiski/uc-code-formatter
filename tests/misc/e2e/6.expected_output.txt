@@ -1,0 +1,33 @@
+//==============================================================================
+// Darkest Hour: Europe '44-'45
+// Darklight Games (c) 2008-2021
+//==============================================================================
+
+class DarkestHourGame extends ROTeamGame
+    dependson(DHActorProxy);
+
+var     Hashtable_string_Object     PlayerSessions; // When a player leaves the server this info is stored for the session so if they return these values won't reset
+
+var     DH_LevelInfo                DHLevelInfo;
+var     DHGameReplicationInfo       GRI;
+
+var     DHAmmoResupplyVolume        DHResupplyAreas[10];
+
+var     array<DHSpawnArea>          DHMortarSpawnAreas;
+var     DHSpawnArea                 DHCurrentMortarSpawnArea[2];
+
+const   OBJECTIVES_MAX = 32;
+var     DHObjective                 DHObjectives[OBJECTIVES_MAX];
+var     array<DHObjectiveGroup>     ObjectiveGroups;
+
+var     DHSpawnManager              SpawnManager;
+var     DHObstacleManager           ObstacleManager;
+var     DHConstructionManager       ConstructionManager;
+var     DHVoteManager               VoteManager;
+
+var     array<string>               FFViolationIDs;                         // Array of ROIDs that have been kicked once this session
+var()   config bool                 bSessionKickOnSecondFFViolation;
+var()   config bool                 bUseWeaponLocking;                      // Weapons can lock (preventing fire) for punishment
+var     int                         WeaponLockTimeSecondsInterval;
+var     int                         WeaponLockTimeSecondsMaximum;
+var     int                         WeaponLockTimeSecondsFFKillsMultiplier;

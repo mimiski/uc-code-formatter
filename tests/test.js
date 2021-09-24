@@ -59,6 +59,7 @@ const filesDict = {
       "3.input.txt",
       "4.input.txt",
       "5.input.txt",
+      "6.input.txt",
     ],
     expected_output: [
       "1.expected_output.txt",
@@ -66,6 +67,7 @@ const filesDict = {
       "3.expected_output.txt",
       "4.expected_output.txt",
       "5.expected_output.txt",
+      "6.expected_output.txt",
     ],
   },
 };
@@ -333,6 +335,17 @@ describe("Formatter", () => {
       .toString();
     const y = fs
       .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[4])
+      .toString();
+    const x = formatter.formatCode(input);
+    chai.expect(x).to.equal(y);
+  });
+
+  it("new lines", () => {
+    const input = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[5])
+      .toString();
+    const y = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[5])
       .toString();
     const x = formatter.formatCode(input);
     chai.expect(x).to.equal(y);

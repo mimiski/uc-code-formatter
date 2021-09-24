@@ -6,14 +6,12 @@ module.exports = {
   
   formatCode: function(input, debug=false) {
     let pipeline = [
-      reducers.forLoopOneLiner,
-      reducers.whileLoopOneLiner,
-      reducers.ifOneLiner,
+      reducers.ifHeaderFormatting,
+      reducers.forLoopHeaderFormatting,
+      reducers.switchHeaderFormatting,
+      reducers.whileLoopHeader,
       reducers.lineIndentation,
       reducers.classDefinitionFormatting,
-      reducers.ifHeaderFormatting,
-      reducers.whileLoopHeader,
-      reducers.forLoopHeaderFormatting,
       reducers.ifMultilineHeaderAlignment,
       reducers.repeatedNewlineFormatting,
     ];

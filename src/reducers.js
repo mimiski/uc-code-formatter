@@ -7,11 +7,12 @@ const applyReplace = (input, [regex, replacement]) => {
 };
 
 module.exports = {
+
   classDefinitionFormatting: function (input) {
     function indentationFunc(index) {
       return index > 0 ? 1 : 0;
     }
-    let regex = new RegExp(regexes.classDefinition);
+    let regex = new RegExp('class.*(extends)(.|\n|\r)*?;');
     if (input.match(regex) != null) {
       let classDefinition = input.match(regex)[0];
       let lines = classDefinition.split(utils.LINE_ENDING);
@@ -62,27 +63,6 @@ module.exports = {
     const regexes = [[new RegExp("while[ |\t]*\\(", "g"), "while ("]];
 
     return regexes.reduce(applyReplace, input);
-  },
-
-  forLoopOneLiner: function (input) {
-    return input.replace(
-      /(\bfor\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-      "$1$2{$3}$4"
-    );
-  },
-
-  whileLoopOneLiner: function (input) {
-    return input.replace(
-      /(\while\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-      "$1$2{$3}$4"
-    );
-  },
-
-  ifOneLiner: function (input) {
-    return input.replace(
-      /(\if\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-      "$1$2{$3}$4"
-    );
   },
 
   ifMultilineHeaderAlignment: function (input) {
