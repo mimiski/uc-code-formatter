@@ -1,7 +1,4 @@
-const classes = require("./classes");
 const utils = require("./utils");
-
-const LINE_ENDING = "\r\n";
 
 const regexes = require("./regexes");
 
@@ -35,7 +32,7 @@ module.exports = {
 
   repeatedNewlineFormatting: function (input) {
     const regex = new RegExp("([ |\t]*?" + utils.LINE_ENDING + "){3,}", "g");
-    result = input.replace(regex, utils.LINE_ENDING + utils.LINE_ENDING);
+    const result = input.replace(regex, utils.LINE_ENDING + utils.LINE_ENDING);
     return result;
   },
 

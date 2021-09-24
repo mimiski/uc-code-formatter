@@ -1,4 +1,3 @@
-const classes = require("./classes");
 const regexes = require("./regexes");
 const reducers = require("./reducers");
 const utils = require("./utils");

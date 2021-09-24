@@ -1,6 +1,5 @@
 const chai = require("chai");
 const formatter = require("../src/formatter");
-const classes = require("../src/classes");
 const reducers = require("../src/reducers");
 const utils = require("../src/utils");
 
