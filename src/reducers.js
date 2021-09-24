@@ -1,7 +1,6 @@
 const classes = require("./classes");
 const utils = require("./utils");
 
-const INDENTATION_STRING = "    ";
 const LINE_ENDING = "\r\n";
 
 const regexes = require("./regexes");
@@ -11,6 +10,7 @@ const applyReplace = (input, [regex, replacement]) => {
 };
 
 module.exports = {
+
   classDefinitionFormatting: function (input) {
     function indentationFunc(index) {
       return index > 0 ? 1 : 0;
@@ -18,12 +18,12 @@ module.exports = {
     let regex = new RegExp(regexes.classDefinition);
     if (input.match(regex) != null) {
       let classDefinition = input.match(regex)[0];
-      let lines = classDefinition.split(LINE_ENDING);
+      let lines = classDefinition.split(utils.LINE_ENDING);
       let result = lines
         .map((line, index) => [line.trim(), indentationFunc(index)])
         .map(
           ([line, indentation]) =>
-            INDENTATION_STRING.repeat(indentation) + line + LINE_ENDING
+            utils.INDENTATION_STRING.repeat(indentation) + line + utils.LINE_ENDING
         )
         .join("");
       return input.replace(regex, result);
@@ -33,8 +33,8 @@ module.exports = {
   },
 
   repeatedNewlineFormatting: function (input) {
-    const regex = new RegExp("(" + LINE_ENDING + "){3,}", 'g');
-    result = input.replace(regex, LINE_ENDING + LINE_ENDING);
+    const regex = new RegExp("(" + utils.LINE_ENDING + "){3,}", 'g');
+    result = input.replace(regex, utils.LINE_ENDING + utils.LINE_ENDING);
     return result;
   },
 
@@ -69,20 +69,23 @@ module.exports = {
 
   forLoopOneLiner: function (input) {
     return input.replace(
-      /(\bfor\b[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]+;)/,
-      "$1{$2}"
+      /(\bfor\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
+      "$1" + utils.LINE_ENDING + "{"  + utils.LINE_ENDING + "$3"  + utils.LINE_ENDING + "}" + utils.LINE_ENDING
     );
   },
 
   whileLoopOneLiner: function (input) {
     return input.replace(
-      /(\bwhile[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/,
-      "$1{$2}"
+      /(\while\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
+        "$1" + utils.LINE_ENDING + "{"  + utils.LINE_ENDING + "$3"  + utils.LINE_ENDING + "}" + utils.LINE_ENDING
     );
   },
 
   ifOneLiner: function (input) {
-    return input.replace(/(if[ |\t]*\(.+\))[ |\t|\r|\n]*?([^{]*;)/, "$1{$2}");
+    return input.replace(
+      /(\if\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
+      "$1" + utils.LINE_ENDING + "{"  + utils.LINE_ENDING + "$3"  + utils.LINE_ENDING + "}" + utils.LINE_ENDING
+    );
   },
 
   ifMultilineHeaderAlignment: function (input) {
@@ -90,18 +93,18 @@ module.exports = {
     const matches = input.match(regex);
     if (matches != null) {
       const replacements = matches.map((match) => {
-        if (match.includes(LINE_ENDING)) {
-          const lines = match.split(LINE_ENDING);
+        if (match.includes(utils.LINE_ENDING)) {
+          const lines = match.split(utils.LINE_ENDING);
           return lines
             .map((lineContent, index) => {
               if (index > 0) {
                 if (index < lines.length - 1) {
-                  return INDENTATION_STRING + lineContent + LINE_ENDING;
+                  return utils.INDENTATION_STRING + lineContent + utils.LINE_ENDING;
                 } else {
-                  return INDENTATION_STRING + lineContent;
+                  return utils.INDENTATION_STRING + lineContent;
                 }
               } else {
-                return lineContent + LINE_ENDING;
+                return lineContent + utils.LINE_ENDING;
               }
             })
             .join("");
@@ -134,8 +137,8 @@ module.exports = {
 
     for (var i = 0; i < input.length; i++) {
       if (
-        i + LINE_ENDING.length < input.length &&
-        equals(input.slice(i, i + LINE_ENDING.length), LINE_ENDING.split(""))
+        i + utils.LINE_ENDING.length < input.length &&
+        equals(input.slice(i, i + utils.LINE_ENDING.length), utils.LINE_ENDING.split(""))
       ) {
         isCommented = false;
       } else if (
@@ -186,27 +189,21 @@ module.exports = {
 
     let contentStrings = utils
       .splitArray(input, splitIndexes)
-      .map((content) => content.join(""))
-      .map((content) => content.replace(/^[\n|\r| ]*/, ""))
-      .map((content) => content.replace(/[\n|\r| ]*$/, ""));
-    // .flatMap((content) => content.split(LINE_ENDING));
+      .map((content) => content.join(""));
 
     let linesWithIndentation = utils
       .zip(contentStrings, indentations)
-      .filter(([content, indentation]) => content != "")
       .flatMap(([content, indentation]) => {
-        return content.split(LINE_ENDING).map((e) => [e, indentation]);
+        return content.split(utils.LINE_ENDING).map((e) => [e, indentation]);
       });
-
-    let additionalIndentation = linesWithIndentation.map((e) => 0);
 
     let result = linesWithIndentation
       .map(([line, indentation]) => {
-        let pass0 = line.replace(/^[\n|\r| ]*/, "");
-        let pass1 = pass0.replace(/[\n|\r| ]*$/, "");
-        return INDENTATION_STRING.repeat(indentation) + pass1;
+        let pass0 = line.replace(/^[ |\t]*/, "");
+        let pass1 = pass0.replace(/[ |\t]*$/, "");
+        return utils.INDENTATION_STRING.repeat(indentation) + pass1;
       })
-      .join(LINE_ENDING);
+      .join(utils.LINE_ENDING);
 
     return result;
   },

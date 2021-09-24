@@ -84,7 +84,7 @@ describe("Reducers", () => {
       reducers.repeatedNewlineFormatting,
     ];
 
-    const result = utils.runPipeline(pipeline, input)
+    const result = utils.runPipeline(pipeline, input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -105,7 +105,7 @@ describe("Reducers", () => {
       reducers.repeatedNewlineFormatting,
     ];
 
-    const result = utils.runPipeline(pipeline, input)
+    const result = utils.runPipeline(pipeline, input);
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -194,7 +194,7 @@ describe("Reducers", () => {
       const result = reducers.forLoopOneLiner(input);
       chai
         .expect(result)
-        .to.match(new RegExp("for[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
+        .to.equal("for (i = 0; i < 5; i++)\r\n{\r\na();\r\n}\r\n");
     });
   });
 
@@ -204,9 +204,7 @@ describe("Reducers", () => {
         .readFileSync("tests/misc/whileLoopOneLiner/" + fileName)
         .toString();
       const result = reducers.whileLoopOneLiner(input);
-      chai
-        .expect(result)
-        .to.match(new RegExp("while[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
+      chai.expect(result).to.equal("while (i>)\r\n{\r\na();\r\n}\r\n");
     });
   });
 
@@ -216,9 +214,7 @@ describe("Reducers", () => {
         .readFileSync("tests/misc/ifOneLiner/" + fileName)
         .toString();
       const result = reducers.ifOneLiner(input);
-      chai
-        .expect(result)
-        .to.match(new RegExp("if[ |\t]*(.+)[ |\t]*{((.|\n|\r)*)"));
+      chai.expect(result).to.equal("if (i>1)\r\n{\r\na();\r\n}\r\n");
     });
   });
 

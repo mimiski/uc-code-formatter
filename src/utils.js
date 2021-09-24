@@ -9,6 +9,11 @@ function zip(a, b) {
 }
 
 module.exports = {
+
+  LINE_ENDING: "\r\n",
+
+  INDENTATION_STRING: "    ",
+
   splitArray: function (array, indexes) {
     return array.reduce(
       (p, c, i) => {
