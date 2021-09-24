@@ -6,24 +6,20 @@ const utils = require("../src/utils");
 
 const fs = require("fs");
 
-function executeTest(testName, f,  config) {
-  const input = config[testName].input.map((fileName) => fs
-    .readFileSync(
-      "tests/misc/" + testName + "/" + fileName
-    )
-    .toString());
-  const expected_output = config[testName].expected_output.map((fileName) => fs
-    .readFileSync(
-      "tests/misc/" + testName + "/" + fileName
-    )
-    .toString());
-  
-    const tests = utils.zip(input, expected_output);
+function executeTest(testName, f, config) {
+  const input = config[testName].input.map((fileName) =>
+    fs.readFileSync("tests/misc/" + testName + "/" + fileName).toString()
+  );
+  const expected_output = config[testName].expected_output.map((fileName) =>
+    fs.readFileSync("tests/misc/" + testName + "/" + fileName).toString()
+  );
 
-    tests.forEach(([input, expected_output]) => {
-      const result = f(input);
-      chai.expect(result).to.equal(expected_output);
-    });
+  const tests = utils.zip(input, expected_output);
+
+  tests.forEach(([input, expected_output]) => {
+    const result = f(input);
+    chai.expect(result).to.equal(expected_output);
+  });
 }
 
 const filesDict = {
@@ -32,24 +28,12 @@ const filesDict = {
     expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
   repeatedNewlineFormatting: {
-    input: "repeatedNewlineFormatting.input.txt",
-    expected_output: "repeatedNewlineFormatting.expected_output.txt",
+    input: ["1.input.txt", "2.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
   },
   forLoopHeaderFormatting: {
     input: ["1.input.txt", "2.input.txt"],
     expected_output: ["1.expected_output.txt", "2.expected_output.txt"],
-  },
-  forLoopOneLiner: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
-    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
-  },
-  whileLoopOneLiner: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
-    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
-  },
-  ifOneLiner: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt"],
-    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
   },
 
   lineIndentationSimple: {
@@ -133,16 +117,11 @@ describe("Reducers", () => {
   });
 
   it("repeatedNewlineFormatting", () => {
-    const input = fs
-      .readFileSync("tests/misc/" + filesDict.repeatedNewlineFormatting.input)
-      .toString();
-    const expected_output = fs
-      .readFileSync(
-        "tests/misc/" + filesDict.repeatedNewlineFormatting.expected_output
-      )
-      .toString();
-    const result = reducers.repeatedNewlineFormatting(input);
-    chai.expect(result).to.equal(expected_output);
+    executeTest(
+      "repeatedNewlineFormatting",
+      reducers.repeatedNewlineFormatting,
+      filesDict
+    );
   });
 
   it("forLoopHeaderFormatting - all entries present", () => {
@@ -207,18 +186,6 @@ describe("Reducers", () => {
       const result = reducers.switchHeaderFormatting(input);
       chai.expect(result).to.equal(expected_output);
     });
-  });
-
-  it("forLoopOneLiner", () => {
-    executeTest("forLoopOneLiner", reducers.forLoopOneLiner, filesDict);
-  });
-
-  it("whileLoopOneLiner", () => {
-    executeTest("whileLoopOneLiner", reducers.whileLoopOneLiner, filesDict);
-  });
-
-  it("ifOneLiner", () => {
-    executeTest("ifOneLiner", reducers.ifOneLiner, filesDict);
   });
 
   it("lineIndentation simple", () => {
@@ -314,19 +281,6 @@ describe("Reducers", () => {
       )
       .toString();
     const result = reducers.lineIndentation(input);
-    chai.expect(result).to.equal(expected_output);
-  });
-
-  it("forLoopOneLinerWithIndentation", () => {
-    const input = "for (i = 0; i < 5; i++) a();";
-    const expected_output = fs
-      .readFileSync(
-        "tests/misc/forLoopOneLiner/forLoopOneLineIndentation.expected_output.txt"
-      )
-      .toString();
-    const pipeline = [reducers.forLoopOneLiner, reducers.lineIndentation];
-
-    const result = utils.runPipeline(pipeline, input);
     chai.expect(result).to.equal(expected_output);
   });
 });

@@ -33,7 +33,7 @@ module.exports = {
   },
 
   repeatedNewlineFormatting: function (input) {
-    const regex = new RegExp("(\s*?" + utils.LINE_ENDING + "){3,}", 'g');
+    const regex = new RegExp("([ |\t]*?" + utils.LINE_ENDING + "){3,}", 'g');
     result = input.replace(regex, utils.LINE_ENDING + utils.LINE_ENDING);
     return result;
   },
