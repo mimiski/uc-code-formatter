@@ -138,10 +138,15 @@ module.exports = {
     const equals = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
     for (var i = 0; i < input.length; i++) {
-      if(i + LINE_ENDING.length < input.length && equals(input.slice(i, i + LINE_ENDING.length), LINE_ENDING.split(''))) {
+      if (
+        i + LINE_ENDING.length < input.length &&
+        equals(input.slice(i, i + LINE_ENDING.length), LINE_ENDING.split(""))
+      ) {
         isCommented = false;
-      }
-      else if(i + 2 < input.length && equals(input.slice(i, i + 2), ['/', '/'])) {
+      } else if (
+        i + 2 < input.length &&
+        equals(input.slice(i, i + 2), ["/", "/"])
+      ) {
         isCommented = true;
       }
       switch (input[i]) {
@@ -167,9 +172,11 @@ module.exports = {
               new classes.ContentBlock(indentation, blockStart, i - 1)
             );
           }
+          contentBlocks.push(
+            new classes.ContentBlock(indentation - 1, i - 1, i)
+          );
           blockStart = i;
           indentation = indentation - 1;
-          contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
           break;
         case '"':
           quotesCounter++;
@@ -187,6 +194,7 @@ module.exports = {
       .map((content) => content.join(""))
       .map((content) => content.replace(/^[\n|\r| ]*/, ""))
       .map((content) => content.replace(/[\n|\r| ]*$/, ""));
+    // .flatMap((content) => content.split(LINE_ENDING));
 
     let linesWithIndentation = utils
       .zip(contentStrings, indentations)
@@ -201,9 +209,9 @@ module.exports = {
       .map(([line, indentation]) => {
         let pass0 = line.replace(/^[\n|\r| ]*/, "");
         let pass1 = pass0.replace(/[\n|\r| ]*$/, "");
-        return INDENTATION_STRING.repeat(indentation) + pass1 + LINE_ENDING;
+        return INDENTATION_STRING.repeat(indentation) + pass1;
       })
-      .join("");
+      .join(LINE_ENDING);
 
     return result;
   },

@@ -6,7 +6,7 @@ const utils = require("./utils");
 module.exports = {
   
   formatCode: function(input) {
-    let formatters = [
+    let pipeline = [
       reducers.forLoopOneLiner,
       reducers.whileLoopOneLiner,
       reducers.ifOneLiner,
@@ -18,7 +18,7 @@ module.exports = {
       reducers.ifMultilineHeaderAlignment,
       reducers.repeatedNewlineFormatting,
     ];
-  
-    return formatters.reduce(utils.applyReducer, input);
+
+    return utils.runPipeline(pipeline, input);
   }
 }

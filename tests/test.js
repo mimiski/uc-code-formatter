@@ -49,12 +49,19 @@ const filesDict = {
   },
 
   e2e: {
-    input: ["1.input.txt", "2.input.txt", "3.input.txt", "4.input.txt"],
+    input: [
+      "1.input.txt",
+      "2.input.txt",
+      "3.input.txt",
+      "4.input.txt",
+      "5.input.txt",
+    ],
     expected_output: [
       "1.expected_output.txt",
       "2.expected_output.txt",
       "3.expected_output.txt",
       "4.expected_output.txt",
+      "5.expected_output.txt",
     ],
   },
 };
@@ -77,7 +84,7 @@ describe("Reducers", () => {
       reducers.repeatedNewlineFormatting,
     ];
 
-    const result = pipeline.reduce(utils.applyReducer, input);
+    const result = utils.runPipeline(pipeline, input)
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -98,7 +105,7 @@ describe("Reducers", () => {
       reducers.repeatedNewlineFormatting,
     ];
 
-    const result = pipeline.reduce(utils.applyReducer, input);
+    const result = utils.runPipeline(pipeline, input)
     chai.expect(result).to.equal(expected_output);
   });
 
@@ -292,8 +299,8 @@ describe("Reducers", () => {
   });
 
   it("lineIndentation curly braces in comments", () => {
-    const input = '// {0} {1}';
-    const expected_output = '// {0} {1}\r\n';
+    const input = "// {0} {1}";
+    const expected_output = "// {0} {1}";
     const result = reducers.lineIndentation(input);
     chai.expect(result).to.equal(expected_output);
   });
@@ -320,7 +327,7 @@ describe("Reducers", () => {
       .toString();
     const pipeline = [reducers.forLoopOneLiner, reducers.lineIndentation];
 
-    const result = pipeline.reduce(utils.applyReducer, input);
+    const result = utils.runPipeline(pipeline, input);
     chai.expect(result).to.equal(expected_output);
   });
 });
@@ -365,6 +372,17 @@ describe("Formatter", () => {
       .toString();
     const y = fs
       .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[3])
+      .toString();
+    const x = formatter.formatCode(input);
+    chai.expect(x).to.equal(y);
+  });
+
+  it("two functions", () => {
+    const input = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.input[4])
+      .toString();
+    const y = fs
+      .readFileSync("tests/misc/e2e/" + filesDict.e2e.expected_output[4])
       .toString();
     const x = formatter.formatCode(input);
     chai.expect(x).to.equal(y);
