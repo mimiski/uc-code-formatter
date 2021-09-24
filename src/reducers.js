@@ -7,12 +7,11 @@ const applyReplace = (input, [regex, replacement]) => {
 };
 
 module.exports = {
-
   classDefinitionFormatting: function (input) {
     function indentationFunc(index) {
       return index > 0 ? 1 : 0;
     }
-    let regex = new RegExp('class.*(extends)(.|\n|\r)*?;');
+    let regex = new RegExp("class.*(extends)(.|\n|\r)*?;");
     if (input.match(regex) != null) {
       let classDefinition = input.match(regex)[0];
       let lines = classDefinition.split(utils.LINE_ENDING);
@@ -20,8 +19,7 @@ module.exports = {
         .map((line, index) => [line.trim(), indentationFunc(index)])
         .map(
           ([line, indentation]) =>
-            utils.INDENTATION_STRING.repeat(indentation) +
-            line
+            utils.INDENTATION_STRING.repeat(indentation) + line
         )
         .join(utils.LINE_ENDING);
       return input.replace(regex, result);
@@ -128,7 +126,12 @@ module.exports = {
       .map(([line, indentation]) => {
         let pass0 = line.replace(/^[ |\t]*/, "");
         let pass1 = pass0.replace(/[ |\t]*$/, "");
-        return utils.INDENTATION_STRING.repeat(indentation) + pass1;
+        if (pass1 != "") {
+          return utils.INDENTATION_STRING.repeat(indentation) + pass1;
+        } else {
+          // do not indent empty lines
+          return "";
+        }
       })
       .join(utils.LINE_ENDING);
 
