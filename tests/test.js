@@ -48,9 +48,7 @@ const filesDict = {
 
   lineIndentationHierarchical: {
     input: [
-      "hierarchical.2.input.txt",
       "hierarchical.1.input.txt",
-      "hierarchical.3.input.txt",
     ],
     expected_output: "hierarchical.expected_output.txt",
   },

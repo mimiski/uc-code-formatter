@@ -10,7 +10,6 @@ const applyReplace = (input, [regex, replacement]) => {
 };
 
 module.exports = {
-
   classDefinitionFormatting: function (input) {
     function indentationFunc(index) {
       return index > 0 ? 1 : 0;
@@ -23,7 +22,9 @@ module.exports = {
         .map((line, index) => [line.trim(), indentationFunc(index)])
         .map(
           ([line, indentation]) =>
-            utils.INDENTATION_STRING.repeat(indentation) + line + utils.LINE_ENDING
+            utils.INDENTATION_STRING.repeat(indentation) +
+            line +
+            utils.LINE_ENDING
         )
         .join("");
       return input.replace(regex, result);
@@ -33,7 +34,7 @@ module.exports = {
   },
 
   repeatedNewlineFormatting: function (input) {
-    const regex = new RegExp("([ |\t]*?" + utils.LINE_ENDING + "){3,}", 'g');
+    const regex = new RegExp("([ |\t]*?" + utils.LINE_ENDING + "){3,}", "g");
     result = input.replace(regex, utils.LINE_ENDING + utils.LINE_ENDING);
     return result;
   },
@@ -77,14 +78,14 @@ module.exports = {
   whileLoopOneLiner: function (input) {
     return input.replace(
       /(\while\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-        "$1$2{$3}$4"
+      "$1$2{$3}$4"
     );
   },
 
   ifOneLiner: function (input) {
     return input.replace(
       /(\if\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-        "$1$2{$3}$4"
+      "$1$2{$3}$4"
     );
   },
 
@@ -99,7 +100,9 @@ module.exports = {
             .map((lineContent, index) => {
               if (index > 0) {
                 if (index < lines.length - 1) {
-                  return utils.INDENTATION_STRING + lineContent + utils.LINE_ENDING;
+                  return (
+                    utils.INDENTATION_STRING + lineContent + utils.LINE_ENDING
+                  );
                 } else {
                   return utils.INDENTATION_STRING + lineContent;
                 }
@@ -126,78 +129,26 @@ module.exports = {
   },
 
   lineIndentation: function (inputString) {
-    var contentBlocks = [];
     var indentation = 0;
-    var blockStart = 0;
-    let input = Array.from(inputString);
-    var quotesCounter = 0;
-    var isCommented = false;
 
-    const equals = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+    const lines = inputString.split(utils.LINE_ENDING);
 
-    for (var i = 0; i < input.length; i++) {
-      if (
-        i + utils.LINE_ENDING.length < input.length &&
-        equals(input.slice(i, i + utils.LINE_ENDING.length), utils.LINE_ENDING.split(""))
-      ) {
-        isCommented = false;
-      } else if (
-        i + 2 < input.length &&
-        equals(input.slice(i, i + 2), ["/", "/"])
-      ) {
-        isCommented = true;
+    const linesWithIndentation = lines.map((line) => {
+      const uncommented = line.match(/^\s*[^\/\/]+/);
+      var i = 0;
+      if (uncommented != null) {
+        const matchedText = uncommented[0];
+
+        if (matchedText.match(/^[ |\t]*{/)) {
+          return [line, indentation++];
+        } else if (matchedText.match(/^[ |\t]*}/)) {
+          return [line, --indentation];
+        }
       }
-      switch (input[i]) {
-        case "{":
-          if (quotesCounter % 2 == 1 || isCommented) {
-            break;
-          }
-          if (blockStart != i - 1) {
-            contentBlocks.push(
-              new classes.ContentBlock(indentation, blockStart, i - 1)
-            );
-          }
-          contentBlocks.push(new classes.ContentBlock(indentation, i - 1, i));
-          blockStart = i;
-          indentation = indentation + 1;
-          break;
-        case "}":
-          if (quotesCounter % 2 == 1 || isCommented) {
-            break;
-          }
-          if (blockStart != i - 1) {
-            contentBlocks.push(
-              new classes.ContentBlock(indentation, blockStart, i - 1)
-            );
-          }
-          contentBlocks.push(
-            new classes.ContentBlock(indentation - 1, i - 1, i)
-          );
-          blockStart = i;
-          indentation = indentation - 1;
-          break;
-        case '"':
-          quotesCounter++;
-          break;
-      }
-    }
+      return [line, indentation];
+    });
 
-    contentBlocks.push(new classes.ContentBlock(indentation, blockStart, i));
-
-    const splitIndexes = contentBlocks.map((c) => c.blockEnd);
-    const indentations = contentBlocks.map((c) => c.indentation);
-
-    let contentStrings = utils
-      .splitArray(input, splitIndexes)
-      .map((content) => content.join(""));
-
-    let linesWithIndentation = utils
-      .zip(contentStrings, indentations)
-      .flatMap(([content, indentation]) => {
-        return content.split(utils.LINE_ENDING).map((e) => [e, indentation]);
-      });
-
-    let result = linesWithIndentation
+    const result = linesWithIndentation
       .map(([line, indentation]) => {
         let pass0 = line.replace(/^[ |\t]*/, "");
         let pass1 = pass0.replace(/[ |\t]*$/, "");

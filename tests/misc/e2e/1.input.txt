@@ -6,5 +6,7 @@ var bool i;
 function Test(int i, bool b)
 {
  for(i = 0; i < 5; i++) 
-    a();
+    {
+      a();
+      }
 }

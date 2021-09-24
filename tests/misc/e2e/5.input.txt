@@ -7,17 +7,26 @@ function Test(int i, bool b)
 {
   x = "{0} asdf";
  for(i = 0; i < 5; i++) 
-    a();   
-  if(i > 5
-    && x > 5) {   
+    {
+      a();
+      }   
+if(i > 5
+    && x > 5)
+    {   
     if(i < 2)  
-    b();  
+    {
+      b();
+      }  
   }   
 }
 
 function Asdf(int i, bool b)
 {
   if(i > 5 && x > 5) 
- for(i = 0; i < 5; i++) 
+  {
+for(i = 0; i < 5; i++) 
+ {
     a();
+    }
+     }
 }

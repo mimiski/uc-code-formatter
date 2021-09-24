@@ -1,6 +1,4 @@
-  
-    
-var bool a;   
+  var bool a;   
  
 var bool b;     
   
