@@ -4,6 +4,10 @@ function applyReducer(accumulator, f) {
   return accumulator.concat([output]);
 }
 
+function zip(a, b) {
+  return a.map((k, i) => [k, b[i]]);
+}
+
 module.exports = {
   splitArray: function (array, indexes) {
     return array.reduce(
@@ -20,14 +24,21 @@ module.exports = {
   },
 
   zip: function (a, b) {
-    return a.map((k, i) => [k, b[i]]);
+    return zip(a, b);
   },
 
-  runPipeline: function (reducers, input) {
+  runPipeline: function (reducers, input, debug = false) {
     const stepResults = reducers.reduce(applyReducer, [input]);
 
-    for (const i in stepResults) {
-      console.log(stepResults[i]);
+    if (debug) {
+      const debugInfo = zip(reducers, stepResults);
+      for (const i in debugInfo) {
+        const [f, result] = debugInfo[i];
+        console.log("--- started step %s --- ", f.name);
+        console.log(stepResults[i]);
+        console.log("--- ended step %s --- ", i);
+        console.log("");
+      }
     }
 
     const result = stepResults[stepResults.length - 1];
