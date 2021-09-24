@@ -31,12 +31,17 @@ module.exports = {
     const stepResults = reducers.reduce(applyReducer, [input]);
 
     if (debug) {
-      const debugInfo = zip(reducers, stepResults);
+      const debugInfo = zip(reducers, stepResults.slice(1));
+
+      console.log("--- started input --- ");
+      console.log(stepResults[0]);
+      console.log("--- ended input --- ");
+      console.log("");
       for (const i in debugInfo) {
         const [f, result] = debugInfo[i];
         console.log("--- started step %s --- ", f.name);
-        console.log(stepResults[i]);
-        console.log("--- ended step %s --- ", i);
+        console.log(result);
+        console.log("--- ended step %s --- ", f.name);
         console.log("");
       }
     }
