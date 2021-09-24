@@ -9,6 +9,11 @@ function Test(int i, bool b)
     for (i = 0; i < 5; i++)
     {
         a();
+        b();
+        c();
+
+        d();
+        e();
     }
     if (i > 5
         && x > 5)
