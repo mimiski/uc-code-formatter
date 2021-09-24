@@ -20,10 +20,9 @@ module.exports = {
         .map(
           ([line, indentation]) =>
             utils.INDENTATION_STRING.repeat(indentation) +
-            line +
-            utils.LINE_ENDING
+            line
         )
-        .join("");
+        .join(utils.LINE_ENDING);
       return input.replace(regex, result);
     } else {
       return input;
