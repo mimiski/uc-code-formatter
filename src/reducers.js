@@ -33,7 +33,7 @@ module.exports = {
   },
 
   repeatedNewlineFormatting: function (input) {
-    const regex = new RegExp("(" + utils.LINE_ENDING + "){3,}", 'g');
+    const regex = new RegExp("(\s*?" + utils.LINE_ENDING + "){3,}", 'g');
     result = input.replace(regex, utils.LINE_ENDING + utils.LINE_ENDING);
     return result;
   },
@@ -70,21 +70,21 @@ module.exports = {
   forLoopOneLiner: function (input) {
     return input.replace(
       /(\bfor\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-      "$1" + utils.LINE_ENDING + "{"  + utils.LINE_ENDING + "$3"  + utils.LINE_ENDING + "}" + utils.LINE_ENDING
+      "$1$2{$3}$4"
     );
   },
 
   whileLoopOneLiner: function (input) {
     return input.replace(
       /(\while\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-        "$1" + utils.LINE_ENDING + "{"  + utils.LINE_ENDING + "$3"  + utils.LINE_ENDING + "}" + utils.LINE_ENDING
+        "$1$2{$3}$4"
     );
   },
 
   ifOneLiner: function (input) {
     return input.replace(
       /(\if\b[ |\t]*\(.+\))([ |\t|\r|\n]*)([^{]+;)([ |\t|\r|\n]*)/,
-      "$1" + utils.LINE_ENDING + "{"  + utils.LINE_ENDING + "$3"  + utils.LINE_ENDING + "}" + utils.LINE_ENDING
+        "$1$2{$3}$4"
     );
   },
 

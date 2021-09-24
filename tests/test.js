@@ -6,6 +6,26 @@ const utils = require("../src/utils");
 
 const fs = require("fs");
 
+function executeTest(testName, f,  config) {
+  const input = config[testName].input.map((fileName) => fs
+    .readFileSync(
+      "tests/misc/" + testName + "/" + fileName
+    )
+    .toString());
+  const expected_output = config[testName].expected_output.map((fileName) => fs
+    .readFileSync(
+      "tests/misc/" + testName + "/" + fileName
+    )
+    .toString());
+  
+    const tests = utils.zip(input, expected_output);
+
+    tests.forEach(([input, expected_output]) => {
+      const result = f(input);
+      chai.expect(result).to.equal(expected_output);
+    });
+}
+
 const filesDict = {
   classDefinition: {
     input: ["1.input.txt", "2.input.txt"],
@@ -21,12 +41,15 @@ const filesDict = {
   },
   forLoopOneLiner: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
   },
   whileLoopOneLiner: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
   },
   ifOneLiner: {
     input: ["1.input.txt", "2.input.txt", "3.input.txt"],
+    expected_output: ["1.expected_output.txt", "2.expected_output.txt", "3.expected_output.txt"],
   },
 
   lineIndentationSimple: {
@@ -187,35 +210,15 @@ describe("Reducers", () => {
   });
 
   it("forLoopOneLiner", () => {
-    filesDict.forLoopOneLiner.input.forEach((fileName) => {
-      const input = fs
-        .readFileSync("tests/misc/forLoopOneLiner/" + fileName)
-        .toString();
-      const result = reducers.forLoopOneLiner(input);
-      chai
-        .expect(result)
-        .to.equal("for (i = 0; i < 5; i++)\r\n{\r\na();\r\n}\r\n");
-    });
+    executeTest("forLoopOneLiner", reducers.forLoopOneLiner, filesDict);
   });
 
   it("whileLoopOneLiner", () => {
-    filesDict.whileLoopOneLiner.input.forEach((fileName) => {
-      const input = fs
-        .readFileSync("tests/misc/whileLoopOneLiner/" + fileName)
-        .toString();
-      const result = reducers.whileLoopOneLiner(input);
-      chai.expect(result).to.equal("while (i>)\r\n{\r\na();\r\n}\r\n");
-    });
+    executeTest("whileLoopOneLiner", reducers.whileLoopOneLiner, filesDict);
   });
 
   it("ifOneLiner", () => {
-    filesDict.ifOneLiner.input.forEach((fileName) => {
-      const input = fs
-        .readFileSync("tests/misc/ifOneLiner/" + fileName)
-        .toString();
-      const result = reducers.ifOneLiner(input);
-      chai.expect(result).to.equal("if (i>1)\r\n{\r\na();\r\n}\r\n");
-    });
+    executeTest("ifOneLiner", reducers.ifOneLiner, filesDict);
   });
 
   it("lineIndentation simple", () => {
