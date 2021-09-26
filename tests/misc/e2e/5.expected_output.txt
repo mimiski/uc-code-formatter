@@ -10,7 +10,7 @@ function Test(int i, bool b)
     {
         a();
     }
-    if (i > 5
+    if (i > 5 ||
         && x > 5)
     {
         if (i < 2)

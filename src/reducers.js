@@ -64,7 +64,7 @@ module.exports = {
   },
 
   ifMultilineHeaderAlignment: function (input) {
-    const regex = new RegExp("[ |\t]*if \\(([^;{}]|\n|\r|\\(|\\))+\\)", "g");
+    const regex = new RegExp("[ |\t]*if \\(([^;{}]|\n|\r|\\(|\\|\||&))+\\)", "g");
     const matches = input.match(regex);
     if (matches != null) {
       const replacements = matches.map((match) => {

@@ -10,9 +10,9 @@ module.exports = {
       reducers.forLoopHeaderFormatting,
       reducers.switchHeaderFormatting,
       reducers.whileLoopHeader,
-      reducers.lineIndentation,
-      reducers.classDefinitionFormatting,
-      reducers.ifMultilineHeaderAlignment,
+      // reducers.lineIndentation,
+      // reducers.classDefinitionFormatting,
+      // reducers.ifMultilineHeaderAlignment,
       reducers.repeatedNewlineFormatting,
     ];
 
